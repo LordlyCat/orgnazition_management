@@ -1,0 +1,65 @@
+.func{
+	height: 60px;
+	position: relative;
+/*	overflow: hidden;
+*/}
+
+select.statement{
+	float: left;
+	width: 170px;
+	height: 40px;
+	margin-top: 10px;
+	margin-left: 3%;
+}
+
+p{
+	float: left;
+	display: inline-block;
+	margin-left: 1%;
+	margin-top: 20px;
+}
+
+select.step{
+	float: left;
+	width: 130px;
+	height: 30px;
+	margin-top: 16px;
+	margin-left: 2%;
+}
+
+.search{
+	float: left;
+	width: 170px;
+	height: 30px;
+	margin-top: 13px;
+	margin-left: 2%;
+}
+
+.searchLogo {
+	display: inline-block;
+	overflow: hidden;
+	margin-top: 0px;
+}
+
+img {
+	float: left;
+	width: 30px;
+	margin-top: 14px;
+	margin-left: 5px;
+}
+
+.btnWrapper{
+	float: right;
+	display: inline-block;
+	width: 32%;
+	margin-right: 3%;
+	margin-top: 15px;
+}
+
+.btnWrapper button{
+	width: 19%;
+	height: 30px;
+	margin-left: 1%;
+}
+
+
