@@ -3,18 +3,15 @@ import React, {
 } from 'react';
 import './Function.css';
 import search from '../search.png';
+import ajax from '../ajax.js';
 
 class Func extends Component {
     constructor(props) {
         super(props);
         this.orz = JSON.parse(localStorage.getItem('orz'));
-        //this.send = this.send.bind(this);
     }
-    getSelectValue(e) {
-        console.log(e.target.value);
-    }
-    // send() {
-    //     console.log(this.props.index);
+    // getSelectValue(e) {
+    //     console.log(e.target.value);
     // }
     render() {
         let statementList = this.orz.statement.map((ele, index) =>
@@ -24,6 +21,7 @@ class Func extends Component {
             <div className="func">
         		<select name="statement" id="statement" className="statement" 
         		onChange={this.props.selectModule}>
+                    <option value ='' key='all'>{this.orz.name}</option>
         			{statementList}
         		</select>
         		<p>(共有100人)</p>

@@ -8,53 +8,110 @@ class Table extends Component {
     constructor(props) {
         super(props);
         this.orz = JSON.parse(localStorage.getItem('orz'));
-        this.handleChange = this.handleChange.bind(this);
-        this.data = [{
-            index: 1,
-            statement: '产品策划及运营部',
-            username: '张三',
-            stuID: 20182195,
-            phoneNum: 18722068874,
-            remarks: '无',
-            send: '未发送'
-        }]
+        //this.handleChange = this.handleChange.bind(this);
+        this.getlist = this.getList.bind(this);
+        this.getPages = this.getPages.bind(this);
 
         this.state = {
             data: [],
-            selected: this.props.selected
+            selected: this.props.selected,
+            pages: 0
         }
 
         let that = this;
+        this.getList({
+            oname: this.orz.name,
+            currindex: 1
+        })
+        this.getPages({
+            oname: this.orz.name
+        })
     }
     componentWillReceiveProps(newProps) {
         let that = this;
-        console.log(newProps)
-        console.log('update');
+        console.log('update', that.orz.name);
+        this.getList({
+            oname: that.orz.name,
+            dname: newProps.selected.dname,
+            currindex: 1
+        });
+        this.getPages({
+            oname: this.orz.name,
+            dname: newProps.selected.dname
+        })
+        return true;
+    }
+    componentDidMount() {
+        this.getPages({
+            oname: '红岩网校工作站'
+        })
+    }
+    // handleChange(event) {
+    //     console.log(event.target.value)
+    //     this.props.change();
+    // }
+    getList(data) {
+        let that = this;
+        //oname, dname, currindex, result, info, status
+        // {
+        //     oname: oname,//组织名
+        //     dname: dname,//部门名
+        //     currindex: currindex,//页码
+        //     result: result,
+        //     info: info,
+        //     status: status
+        // }
         ajax({
             async: true,
             url: 'https://bmtest.redrock.team/469bba0a564235dfceede42db14f17b0/getuserlist',
             method: 'POST',
-            data: {
-                oname: that.orz.name,
-                dname: newProps.selected.dname,
-                currindex: 1
-            },
+            data: data,
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
-                authorization: newProps.authorization
+                authorization: localStorage.getItem('authorization')
             },
             success: (res) => {
-                console.log('getList')
+                console.log('getList');
+                if (res.response.slice(2, 7) === 'error') {
+                    console.log('jwt error');
+                    alert('登录过期，请重新登录');
+                    window.location = '/#/login';
+                    return
+                }
                 that.setState({
                     data: res.response
                 })
             }
         })
-        return true;
     }
-    handleChange(event) {
-        //console.log(event.target.value)
-        this.props.change();
+    getPages(data) {
+        let that = this;
+        ajax({
+            async: true,
+            url: 'https://bmtest.redrock.team/469bba0a564235dfceede42db14f17b0/gettotal',
+            method: 'POST',
+            data: data,
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                authorization: localStorage.getItem('authorization')
+            },
+            success: (res) => {
+
+                if (res.response.slice(2, 7) === 'error') {
+                    console.log('jwt error');
+                    alert('登录过期，请重新登录');
+                    window.location = '/#/login';
+                    return
+                }
+                console.log('pages', res.response);
+                that.setState({
+                    pages: parseInt(res.response, 10)
+                })
+            }
+        })
+    }
+    changePage(currindex) {
+        //this.getList()
     }
     render() {
         let data = this.state.data;
@@ -85,7 +142,7 @@ class Table extends Component {
         return (
             <div className="tableWrapper">
                 <div className="tables">
-                    <table>
+                    <table cellSpacing="0">
                         <tbody>
                             <tr>
                                 <th className="selects"></th>
@@ -102,7 +159,7 @@ class Table extends Component {
                         </tbody>
                     </table>
                 </div>
-                <Pagination />
+                <Pagination pages={this.state.pages}/>
             </div>
         )
     }
@@ -153,10 +210,20 @@ class Pagination extends Component {
         super(props);
     }
     render() {
+        let list = [];
+        for (let i = 0; i < this.props.pages; i++) {
+            if (i === 0) {
+                list[i] = <li key={i}><a className="active">{i + 1}</a></li>;
+                continue;
+            }
+            list[i] = <li key={i}><a>{i + 1}</a></li>
+        }
         return (
-            <div className="pagination">
-
-            </div>
+            <ul className="pagination">
+                <li><a>«</a></li>
+                {list}
+                <li><a>»</a></li>
+            </ul>
         )
     }
 }

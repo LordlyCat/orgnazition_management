@@ -4,6 +4,9 @@ import React, {
 import ReactDOM from 'react-dom';
 import './Login.css';
 import ajax from '../ajax.js';
+import {
+    Redirect
+} from 'react-router-dom';
 
 class Login extends Component {
     constructor() {
@@ -12,7 +15,8 @@ class Login extends Component {
         this.handleChange = this.handleChange.bind(this);
         this.state = {
             oname: '',
-            password: ''
+            password: '',
+            logined: false
         }
     }
 
@@ -34,14 +38,16 @@ class Login extends Component {
                 let headerData = res.getAllResponseHeaders();
                 console.log(JSON.parse(res.response));
                 if (JSON.parse(res.response).name === this.state.oname) {
-                    console.log(headerData)
+                    console.log(headerData.split('\n')[0].split(': ')[1]);
+                    localStorage.setItem('authorization', headerData.split('\n')[0].split(': ')[1])
+                    localStorage.setItem('oname', that.state.oname);
                     alert('Login successfully');
+                    that.setState({
+                        logined: true
+                    })
                 } else {
                     alert('Login failed');
                 }
-                // that.setState({
-                //     authorization: headerData.split('\n')[0].split(': ')[1]
-                // })
             }
         })
     }
@@ -59,6 +65,9 @@ class Login extends Component {
     }
 
     render() {
+        if (this.state.logined) {
+            return <Redirect to="/index"/>
+        }
         return (
             <div>
                 <div className="title">组织报名系统后台管理</div>

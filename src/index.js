@@ -17,7 +17,7 @@ import registerServiceWorker from './registerServiceWorker';
 class App extends React.Component {
     constructor(props) {
         super(props);
-
+        //console.log(localStorage.getItem('authorization'))
         this.allOrz = [{
             name: "红岩网校工作站",
             statement: ['产品策划及运营部', '视觉设计部', 'Web研发部', '移动开发部', '运维安全部']
@@ -64,27 +64,7 @@ class App extends React.Component {
         this.send = this.send.bind(this);
     }
     componentDidMount() {
-        console.log('app_did')
-        let that = this;
-        ajax({
-            url: 'https://bmtest.redrock.team/469bba0a564235dfceede42db14f17b0/login',
-            method: 'POST',
-            data: {
-                username: 'Redrock',
-                passwd: '123456'
-            },
-            header: 'application/x-www-form-urlencoded',
-            headers: {
-                'Content-type': 'application/x-www-form-urlencoded'
-            },
-            success: (res) => {
-                let headerData = res.getAllResponseHeaders();
-                that.setState({
-                    //orgnazition: that.allOrz[0],
-                    authorization: headerData.split('\n')[0].split(': ')[1]
-                })
-            }
-        })
+
     }
     arrRemove(arr, ele) {
         for (var i = 0; i < arr.length; i++) {
@@ -147,7 +127,7 @@ class App extends React.Component {
                 <Table 
                 index={this.state.index} 
                 //orgnazition={this.state.orgnazition}
-                authorization={this.state.authorization}// JWT
+                //authorization={this.state.authorization}// JWT
                 addPushMessage={this.addPushMessage}
                 deletePushMessage={this.deletePushMessage}
                 selected={this.state.selected}/>

@@ -21,7 +21,7 @@ p{
 
 select.step{
 	float: left;
-	width: 130px;
+	width: 100px;
 	height: 30px;
 	margin-top: 16px;
 	margin-left: 2%;
@@ -29,7 +29,7 @@ select.step{
 
 .search{
 	float: left;
-	width: 170px;
+	width: 150px;
 	height: 30px;
 	margin-top: 13px;
 	margin-left: 2%;
@@ -51,7 +51,7 @@ img {
 .btnWrapper{
 	float: right;
 	display: inline-block;
-	width: 32%;
+	width: 26%;
 	margin-right: 3%;
 	margin-top: 15px;
 }
