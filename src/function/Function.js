@@ -3,7 +3,7 @@ import React, {
 } from 'react';
 import './Function.css';
 import search from '../search.png';
-import ajax from '../ajax.js';
+//import ajax from '../ajax.js';
 
 class Func extends Component {
     constructor(props) {
@@ -42,7 +42,7 @@ class Func extends Component {
         		<div className="btnWrapper">
         			<button>导出</button>
         			<button>导入</button>
-        			<button onClick={this.props.send}>推送</button>
+        			<button onClick={this.props.showTemplate}>推送</button>
         			<button>删除</button>
         		</div>
 

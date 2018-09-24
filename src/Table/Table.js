@@ -11,6 +11,7 @@ class Table extends Component {
         //this.handleChange = this.handleChange.bind(this);
         this.getlist = this.getList.bind(this);
         this.getPages = this.getPages.bind(this);
+        this.goToPage = this.goToPage.bind(this);
 
         this.state = {
             data: [],
@@ -18,7 +19,7 @@ class Table extends Component {
             pages: 0
         }
 
-        let that = this;
+        //let that = this;
         this.getList({
             oname: this.orz.name,
             currindex: 1
@@ -28,6 +29,7 @@ class Table extends Component {
         })
     }
     componentWillReceiveProps(newProps) {
+
         let that = this;
         console.log('update', that.orz.name);
         this.getList({
@@ -43,7 +45,7 @@ class Table extends Component {
     }
     componentDidMount() {
         this.getPages({
-            oname: '红岩网校工作站'
+            oname: this.orz.name
         })
     }
     // handleChange(event) {
@@ -73,9 +75,9 @@ class Table extends Component {
             success: (res) => {
                 console.log('getList');
                 if (res.response.slice(2, 7) === 'error') {
-                    console.log('jwt error');
-                    alert('登录过期，请重新登录');
-                    window.location = '/#/login';
+                    console.log('jwt error', res.response);
+                    // alert('登录过期，请重新登录');
+                    // window.location = '/#/login';
                     return
                 }
                 that.setState({
@@ -98,20 +100,33 @@ class Table extends Component {
             success: (res) => {
 
                 if (res.response.slice(2, 7) === 'error') {
-                    console.log('jwt error');
-                    alert('登录过期，请重新登录');
-                    window.location = '/#/login';
+                    console.log('jwt error', res.response);
+                    // alert('登录过期，请重新登录');
+                    // window.location = '/#/login';
                     return
                 }
-                console.log('pages', res.response);
+                //console.log('pages', res.response);
                 that.setState({
                     pages: parseInt(res.response, 10)
                 })
             }
         })
     }
-    changePage(currindex) {
-        //this.getList()
+    goToPage(currindex) {
+        let data = {};
+        data.oname = this.orz.name;
+        data.currindex = ++currindex.i;
+        //console.log(data);
+        this.getList(data);
+        let pageArr = document.querySelectorAll('a');
+        for (var i = 0; i < pageArr.length; i++) {
+            if (i === data.currindex) {
+                pageArr[i].className = 'active';
+            } else {
+                pageArr[i].className = '';
+            }
+        }
+
     }
     render() {
         let data = this.state.data;
@@ -145,7 +160,7 @@ class Table extends Component {
                     <table cellSpacing="0">
                         <tbody>
                             <tr>
-                                <th className="selects"></th>
+                                <th className="selects"><span id="all">全选</span><input className="checkBox" type="checkbox" name="selectAll" /></th>
                                 <th className="index">序号</th>
                                 <th className="stateName">部门</th>
                                 <th className="username">姓名</th>
@@ -159,7 +174,11 @@ class Table extends Component {
                         </tbody>
                     </table>
                 </div>
-                <Pagination pages={this.state.pages}/>
+                <Pagination 
+                orz={this.orz}
+                pages={this.state.pages}
+                getList={this.getList}
+                goToPage={this.goToPage}/>
             </div>
         )
     }
@@ -168,11 +187,19 @@ class Table extends Component {
 class Row extends Component {
     constructor(props) {
         super(props);
-        this.state = {
-            selected: false
+        let result;
+        if (props.data.result) {
+            result = props.data.result
+        } else {
+            result = '状态选择'
         }
-        //console.log(this.props)
+        this.state = {
+            selected: false,
+            status: result
+        }
+        //console.log(this.state)
         this.handleChange = this.handleChange.bind(this);
+        this.changeStatus = this.changeStatus.bind(this);
     }
     handleChange(event) {
         //console.log(event.target.value)
@@ -188,6 +215,42 @@ class Row extends Component {
             this.props.addPushMessage(event.target.value);
         }
     }
+    changeStatus(e) {
+        //改变面试状态
+        let status = e.target.value;
+        let data = {
+            "id": [this.props.data.cid],
+            "beizhu": '5面',
+            "tid": "H3VNgVqo3r9ewRi0hhGJDKl_-VBginnIgtFmNyRXeiM",
+            "result": status,
+            "choose": -1,
+            "info": ["test1", "test2", "test3", "test4", "test5", "test6", "test7"]
+        }
+        let that = this;
+        ajax({
+            async: true,
+            url: 'https://bmtest.redrock.team/469bba0a564235dfceede42db14f17b0/addinfolist',
+            method: 'POST',
+            data: JSON.stringify(data),
+            headers: {
+                'Content-Type': 'application/json',
+                authorization: localStorage.getItem('authorization')
+            },
+            success: (res) => {
+
+                if (res.response.slice(2, 7) === 'error') {
+                    console.log('jwt error', res.response);
+                    alert('登录过期，请重新登录');
+                    window.location = '/#/login';
+                    return
+                }
+                console.log('面试', res.response);
+                that.setState({
+                    status: status
+                })
+            }
+        })
+    }
     render() {
         return (
             <tr>
@@ -198,8 +261,15 @@ class Row extends Component {
                 <td>{this.props.data.stuid}</td>
                 <td>{this.props.data.phonenum}</td>
                 <td>{this.props.data.info}</td>
-                <td>{this.props.data.result}</td>
-                <td>{this.props.data.status}</td>
+                <td>
+                    <select name="step" id="selectStatus" className="" onChange={this.changeStatus} value={this.state.status} >
+                        <option value ="状态选择">状态选择</option>
+                        <option value ="未通过">未通过</option>
+                        <option value="通过">通过</option>
+                        <option value="待定">待定</option>
+                    </select>
+                </td>
+                <td></td>
             </tr>
         )
     }
@@ -208,15 +278,23 @@ class Row extends Component {
 class Pagination extends Component {
     constructor(props) {
         super(props);
+        //this.goToPage = this.goToPage.bind(this);
     }
+    // goToPage(currindex) {
+    //     let data = {};
+    //     data.oname = this.props.orz.name;
+    //     data.currindex = ++currindex.i;
+    //     //console.log(data);
+    //     this.props.getList(data)
+    // }
     render() {
         let list = [];
         for (let i = 0; i < this.props.pages; i++) {
             if (i === 0) {
-                list[i] = <li key={i}><a className="active">{i + 1}</a></li>;
+                list[i] = <li key={i}><a className="active" onClick={this.props.goToPage.bind(this, {i})}>{i + 1}</a></li>;
                 continue;
             }
-            list[i] = <li key={i}><a>{i + 1}</a></li>
+            list[i] = <li key={i}><a onClick={this.props.goToPage.bind(this, {i})}>{i + 1}</a></li>
         }
         return (
             <ul className="pagination">

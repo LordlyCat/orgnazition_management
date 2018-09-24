@@ -1,7 +1,7 @@
 import React, {
     Component
 } from 'react';
-import ReactDOM from 'react-dom';
+//import ReactDOM from 'react-dom';
 import './Login.css';
 import ajax from '../ajax.js';
 import {
@@ -50,6 +50,7 @@ class Login extends Component {
                 }
             }
         })
+        return false;
     }
 
     handleChange(e) {
@@ -69,13 +70,11 @@ class Login extends Component {
             return <Redirect to="/index"/>
         }
         return (
-            <div>
+            <div id="login">
                 <div className="title">组织报名系统后台管理</div>
-                <form onSubmit={this.handleSubmit}>
-                    <input type="text" value={this.state.oname} onChange={this.handleChange} />
-                    <input type="password" value={this.state.password} onChange={this.handleChange} />
-                    <input type="submit" value="Login"/>
-                </form>
+                <input type="text" value={this.state.oname} onChange={this.handleChange} />
+                <input type="password" value={this.state.password} onChange={this.handleChange} />
+                <input type="submit" value="Login" onClick={this.handleSubmit} />
             </div>
         )
     }

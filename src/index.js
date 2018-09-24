@@ -6,6 +6,7 @@ import HeaderInfo from './header/HeaderInfo.js';
 import Func from './function/Function.js';
 import Table from './Table/Table.js';
 import Login from './Login/Login.js';
+import Template from './Template/template.js';
 import {
     HashRouter as Router,
     Route,
@@ -55,13 +56,18 @@ class App extends React.Component {
                 schedule: '',
                 status: ''
             },
-            pushList: []
+            pushList: [],
+            setStep: '',
+            show: false
         }
         this.pushList = [];
+        this.orz = JSON.parse(localStorage.getItem('orz'));
         this.addPushMessage = this.addPushMessage.bind(this);
         this.deletePushMessage = this.deletePushMessage.bind(this);
         this.selectModule = this.selectModule.bind(this);
         this.send = this.send.bind(this);
+        this.showTemplate = this.showTemplate.bind(this);
+        this.setStep = this.setStep.bind(this);
     }
     componentDidMount() {
 
@@ -93,11 +99,49 @@ class App extends React.Component {
         // console.log(this.arrRemove(this.state.pushList, id))
     }
     send() {
+        return false;
         console.log(this.pushList);
         var checkboxArr = document.querySelectorAll('.checkBox');
         for (var i = 0, length1 = checkboxArr.length; i < length1; i++) {
             checkboxArr[i].checked = false;
         }
+        let that = this;
+        // let data = {
+
+        // }
+        let data = {
+            "id": this.pushList,
+            "beizhu": '5面',
+            "tid": "H3VNgVqo3r9ewRi0hhGJDKl_-VBginnIgtFmNyRXeiM", //消息模板ID
+            "result": null,
+            "choose": 0, //推送模式
+            "info": [this.orz.name, "test2", "test3", "test4", "test5", "test6", "test7"]
+        }
+        console.log(data);
+        ajax({
+            async: true,
+            url: 'https://bmtest.redrock.team/469bba0a564235dfceede42db14f17b0/addinfolist',
+            method: 'POST',
+            data: JSON.stringify(data),
+            headers: {
+                'Content-Type': 'application/json',
+                authorization: localStorage.getItem('authorization')
+            },
+            success: (res) => {
+
+                if (res.response.slice(2, 7) === 'error') {
+                    console.log('jwt error', res.response);
+                    alert('登录过期，请重新登录');
+                    window.location = '/#/login';
+                    return
+                }
+                console.log('面试', res.response);
+                // that.setState({
+                //     status: status
+                // })
+            }
+        })
+
         this.pushList = [];
     }
     selectModule(e) {
@@ -115,7 +159,33 @@ class App extends React.Component {
             selected: selected
         })
     }
+    showTemplate() {
+        console.log('show');
+        if (this.state.show) {
+            this.setState({
+                show: false
+            })
+        } else {
+            this.setState({
+                show: true
+            })
+        }
+    }
+    setStep(e) {
+        console.log('step', e.target.value);
+        this.setState({
+            setStep: e.target.value
+        })
+    }
+    selectTemplate() {
+
+    }
     render() {
+        let show = null;
+        if (this.state.show) {
+            show = <Template showTemplate={this.showTemplate} 
+            setStep={this.setStep} />
+        }
         return (
             <div>
             	<HeaderInfo />
@@ -123,6 +193,7 @@ class App extends React.Component {
                 //orgnazition={this.state.orgnazition}
                 //pushList={this.state.pushList}
                 send={this.send}
+                showTemplate={this.showTemplate}
                 selectModule={this.selectModule}/>
                 <Table 
                 index={this.state.index} 
@@ -131,6 +202,8 @@ class App extends React.Component {
                 addPushMessage={this.addPushMessage}
                 deletePushMessage={this.deletePushMessage}
                 selected={this.state.selected}/>
+
+                {show}
             </div>
         )
     }
