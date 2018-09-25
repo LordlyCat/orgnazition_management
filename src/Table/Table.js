@@ -269,7 +269,7 @@ class Row extends Component {
                         <option value="待定">待定</option>
                     </select>
                 </td>
-                <td></td>
+                <td>{this.props.data.status}</td>
             </tr>
         )
     }

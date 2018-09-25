@@ -58,7 +58,9 @@ class App extends React.Component {
             },
             pushList: [],
             setStep: '',
-            show: false
+            way: '',
+            show: false,
+            templateID: ''
         }
         this.pushList = [];
         this.orz = JSON.parse(localStorage.getItem('orz'));
@@ -68,6 +70,8 @@ class App extends React.Component {
         this.send = this.send.bind(this);
         this.showTemplate = this.showTemplate.bind(this);
         this.setStep = this.setStep.bind(this);
+        this.setWay = this.setWay.bind(this);
+        this.selectTemplate = this.selectTemplate.bind(this);
     }
     componentDidMount() {
 
@@ -99,25 +103,35 @@ class App extends React.Component {
         // console.log(this.arrRemove(this.state.pushList, id))
     }
     send() {
-        return false;
-        console.log(this.pushList);
+
         var checkboxArr = document.querySelectorAll('.checkBox');
         for (var i = 0, length1 = checkboxArr.length; i < length1; i++) {
             checkboxArr[i].checked = false;
         }
+        let info_0 = [this.orz.name, this.state.selected.dname, "不知道", "09.27 18:20", "YRX", "1008611", this.state.setStep];
+        let info_1 = [this.orz.name, "haha", "不知道", "09.27 18:20"];
         let that = this;
         // let data = {
 
         // }
+        let templateID = this.state.templateID;
+        if (this.state.way === 0 && templateID.length === 0) {
+            templateID = 'H3VNgVqo3r9ewRi0hhGJDKl_-VBginnIgtFmNyRXeiM';
+        }
+        if (this.state.way === 1 && templateID.length === 0) {
+            templateID = '200159';
+        }
         let data = {
             "id": this.pushList,
-            "beizhu": '5面',
-            "tid": "H3VNgVqo3r9ewRi0hhGJDKl_-VBginnIgtFmNyRXeiM", //消息模板ID
+            "beizhu": this.state.setStep,
+            "tid": templateID, //"H3VNgVqo3r9ewRi0hhGJDKl_-VBginnIgtFmNyRXeiM", //消息模板ID
             "result": null,
-            "choose": 0, //推送模式
-            "info": [this.orz.name, "test2", "test3", "test4", "test5", "test6", "test7"]
+            "choose": this.state.way, //推送模式
+            "info": info_0
         }
         console.log(data);
+        //return false;
+
         ajax({
             async: true,
             url: 'https://bmtest.redrock.team/469bba0a564235dfceede42db14f17b0/addinfolist',
@@ -136,9 +150,10 @@ class App extends React.Component {
                     return
                 }
                 console.log('面试', res.response);
-                // that.setState({
-                //     status: status
-                // })
+                that.showTemplate();
+                that.setState({
+                    templateID: ''
+                })
             }
         })
 
@@ -177,14 +192,25 @@ class App extends React.Component {
             setStep: e.target.value
         })
     }
-    selectTemplate() {
-
+    setWay(e) {
+        this.setState({
+            way: e
+        })
+    }
+    selectTemplate(e) {
+        this.setState({
+            templateID: e
+        })
     }
     render() {
         let show = null;
         if (this.state.show) {
-            show = <Template showTemplate={this.showTemplate} 
-            setStep={this.setStep} />
+            show = <Template 
+            showTemplate={this.showTemplate} 
+            setStep={this.setStep}
+            send={this.send}
+            setWay={this.setWay}
+            selectTemplate={this.selectTemplate} />
         }
         return (
             <div>
