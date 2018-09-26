@@ -17,7 +17,7 @@ class Template extends Component {
         this.setState({
             way: e
         })
-        console.log(e);
+        //console.log(e);
         if (e === 'xbs') {
             this.props.setWay(0);
         } else if (e === 'sms') {
@@ -25,20 +25,22 @@ class Template extends Component {
         }
     }
     render() {
-        console.log('way', this.state.way)
+        //console.log('way', this.state.way)
         let T;
         if (this.state.way === 'xbs') {
             T = <XbsTemplate 
             showTemplate={this.props.showTemplate} 
             setStep={this.props.setStep}
             send={this.props.send}
-            selectTemplate={this.props.selectTemplate} />
+            selectTemplate={this.props.selectTemplate}
+            setInfo={this.props.setInfo} />
         } else if (this.state.way === 'sms') {
             T = <SMSTemplate 
             showTemplate={this.props.showTemplate} 
             setStep={this.props.setStep}
             send={this.props.send}
-            selectTemplate={this.props.selectTemplate} />
+            selectTemplate={this.props.selectTemplate}
+            setInfo={this.props.setInfo} />
         } else {
             T = <SelectWay chooseWay={this.chooseWay} showTemplate={this.props.showTemplate} />
         }
@@ -74,14 +76,16 @@ class SelectWay extends Component {
  */
 
 class XbsTemplate extends Component {
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
         this.selectT = this.selectT.bind(this);
+        this.setT = this.setT.bind(this);
         this.state = {
             select: 1,
-            templateArr: ['社团组织：XX 面试时间：XX 面试地点：XX 联系人姓名：XX 联系人联系方式：XX',
-                '来自 XX 的提醒 学生姓名：XX，意向部门：XX，录取结果：XX'
-            ]
+            templateArr: [<Txbs_1 setInfo={props.setInfo} setT={this.setT} />,
+                <Txbs_2 setInfo={props.setInfo} setT={this.setT} />
+            ],
+            info: null
         }
     }
     selectT(e) {
@@ -97,13 +101,18 @@ class XbsTemplate extends Component {
         }
 
     }
+    setT(data) {
+        this.setState({
+            info: data
+        })
+    }
     render() {
         return (
             <div className="xbsTemplate">
                 <div className="title">小帮手消息推送</div>
                 <div className="setStep">
                     <span>定义流程进度：</span>
-                    <input type="text" onChange={this.props.setStep} />
+                    <input type="text" placeholder="如“一面面试”" onChange={this.props.setStep} />
                 </div>
                 <div className="template">
                     <span>模板选择：</span>
@@ -111,7 +120,7 @@ class XbsTemplate extends Component {
                         <option value ="1">模板一</option>
                         <option value ="2">模板二</option>
                     </select>
-                    <p>{this.state.templateArr[this.state.select - 1]}</p>
+                    <div>{this.state.templateArr[this.state.select - 1]}</div>
                 </div>
                 <div className="quit" onClick={this.props.showTemplate}>取消</div>
                 <div className="check" onClick={this.props.send} >确定</div>
@@ -120,17 +129,84 @@ class XbsTemplate extends Component {
     }
 }
 
-
-class SMSTemplate extends Component {
+class Txbs_1 extends Component {
     constructor() {
         super();
+        this.getInput = this.getInput.bind(this);
+        this.getState = this.getState.bind(this);
+        this.info = {
+            setStep: '',
+            time: '',
+            location: '',
+            contactName: '',
+            contactPhone: ''
+        }
+
+        localStorage.setItem('info', JSON.stringify(this.info))
+    }
+    getInput(key, e) {
+        let info = JSON.parse(localStorage.getItem('info'));
+        info[key] = e.target.value;
+        //console.log(info)
+        localStorage.setItem('info', JSON.stringify(info));
+
+    }
+    getState() {
+        return this.state
+    }
+    render() {
+        return (
+            <div className="Twrapper">
+                <div className="inputBox"><span>面试时间：</span><input type="text" onChange={this.getInput.bind(this, 'time')}/></div>
+                <div className="inputBox"><span>面试地点：</span><input type="text" onChange={this.getInput.bind(this, 'location')}/></div>
+                <div className="inputBox"><span>联系人姓名：</span><input type="text" onChange={this.getInput.bind(this, 'contactName')}/></div>
+                <div className="inputBox"><span>联系人联系方式：</span><input type="text" onChange={this.getInput.bind(this, 'contactPhone')}/></div>
+            </div>
+        )
+    }
+}
+
+class Txbs_2 extends Component {
+    constructor() {
+        super();
+        this.getInput = this.getInput.bind(this);
+        this.getState = this.getState.bind(this);
+        this.info = {
+            result: ''
+        }
+
+        localStorage.setItem('info', JSON.stringify(this.info))
+    }
+    getInput(key, e) {
+        let info = JSON.parse(localStorage.getItem('info'));
+        info[key] = e.target.value;
+        console.log(info)
+        localStorage.setItem('info', JSON.stringify(info));
+
+    }
+    getState() {
+        return this.state
+    }
+    render() {
+        return (
+            <div className="Twrapper">
+                <div className="inputBox"><span>录取结果：</span><input type="text" onChange={this.getInput.bind(this, 'result')}/></div>
+            </div>
+        )
+    }
+}
+
+
+class SMSTemplate extends Component {
+    constructor(props) {
+        super(props);
         this.selectT = this.selectT.bind(this);
         this.state = {
             select: 1,
-            templateArr: ['XX同学,你先前申请的组织需面试:组织: XX  ,地点: XX ,时间: XX , 联系方式: XX',
-                '来自 XX 的提醒: 学生姓名: XX ,意向部门: XX, 录取结果: XX '
+            templateArr: [<Tsms_1 setInfo={props.setInfo} setT={this.setT} />,
+                <Tsms_2 setInfo={props.setInfo} setT={this.setT} />
             ],
-            templateID: [200159, 196813]
+            templateID: [201497, 196810]
         }
     }
     selectT(e) {
@@ -138,11 +214,11 @@ class SMSTemplate extends Component {
             select: e.target.value
         })
         if (e.target.value == 1) {
-            this.props.selectTemplate(200159)
+            this.props.selectTemplate(201497)
         } else if (e.target.value == 2) {
-            this.props.selectTemplate(196813)
+            this.props.selectTemplate(196810)
         } else {
-            this.props.selectTemplate(200159);
+            this.props.selectTemplate(201497);
         }
 
     }
@@ -160,7 +236,7 @@ class SMSTemplate extends Component {
                         <option value ="1">模板一</option>
                         <option value ="2">模板二</option>
                     </select>
-                    <p>{this.state.templateArr[this.state.select - 1]}</p>
+                    <div>{this.state.templateArr[this.state.select - 1]}</div>
                 </div>
                 <div className="quit" onClick={this.props.showTemplate}>取消</div>
                 <div className="check" onClick={this.props.send} >确定</div>
@@ -168,5 +244,72 @@ class SMSTemplate extends Component {
         )
     }
 }
+
+
+class Tsms_1 extends Component {
+    constructor() {
+        super();
+        this.getInput = this.getInput.bind(this);
+        this.getState = this.getState.bind(this);
+        this.info = {
+            setStep: '',
+            time: '',
+            location: '',
+            contactPhone: ''
+        }
+
+        localStorage.setItem('info', JSON.stringify(this.info))
+    }
+    getInput(key, e) {
+        let info = JSON.parse(localStorage.getItem('info'));
+        info[key] = e.target.value;
+        console.log(info)
+        localStorage.setItem('info', JSON.stringify(info));
+
+    }
+    getState() {
+        return this.state
+    }
+    render() {
+        return (
+            <div className="Twrapper">
+                <div className="inputBox"><span>面试时间：</span><input type="text" onChange={this.getInput.bind(this, 'time')}/></div>
+                <div className="inputBox"><span>面试地点：</span><input type="text" onChange={this.getInput.bind(this, 'location')}/></div>
+                <div className="inputBox"><span>联系方式：</span><input type="text" onChange={this.getInput.bind(this, 'contactPhone')}/></div>
+            </div>
+        )
+    }
+}
+
+class Tsms_2 extends Component {
+    constructor() {
+        super();
+        this.getInput = this.getInput.bind(this);
+        this.getState = this.getState.bind(this);
+        this.info = {
+            result: ''
+        }
+
+        localStorage.setItem('info', JSON.stringify(this.info))
+    }
+    getInput(key, e) {
+        let info = JSON.parse(localStorage.getItem('info'));
+        info[key] = e.target.value;
+        console.log(info)
+        localStorage.setItem('info', JSON.stringify(info));
+
+    }
+    getState() {
+        return this.state
+    }
+    render() {
+        return (
+            <div className="Twrapper">
+                <div className="inputBox"><span>录取结果：</span><input type="text" onChange={this.getInput.bind(this, 'result')}/></div>
+            </div>
+        )
+    }
+}
+
 
 export default Template;

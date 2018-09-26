@@ -29,20 +29,27 @@ class Table extends Component {
         })
     }
     componentWillReceiveProps(newProps) {
-
         let that = this;
-        console.log('update', that.orz.name);
-        this.getList({
+        console.log('update');
+        let data = {
             oname: that.orz.name,
             dname: newProps.selected.dname,
             currindex: 1
-        });
+        }
+        if (newProps.selected.status.length > 0 && newProps.selected.status.length < 4) {
+            data.result = newProps.selected.status
+        }
+        if (newProps.selected.schedule.length > 0 && newProps.selected.schedule.length < 4) {
+            data.info = newProps.selected.schedule
+        }
+        this.getList(data);
         this.getPages({
             oname: this.orz.name,
             dname: newProps.selected.dname
         })
         return true;
     }
+
     componentDidMount() {
         this.getPages({
             oname: this.orz.name
@@ -73,9 +80,8 @@ class Table extends Component {
                 authorization: localStorage.getItem('authorization')
             },
             success: (res) => {
-                console.log('getList');
                 if (res.response.slice(2, 7) === 'error') {
-                    console.log('jwt error', res.response);
+                    //console.log('jwt error', res.response);
                     // alert('登录过期，请重新登录');
                     // window.location = '/#/login';
                     return
@@ -220,7 +226,7 @@ class Row extends Component {
         let status = e.target.value;
         let data = {
             "id": [this.props.data.cid],
-            "beizhu": '5面',
+            "beizhu": '',
             "tid": "H3VNgVqo3r9ewRi0hhGJDKl_-VBginnIgtFmNyRXeiM",
             "result": status,
             "choose": -1,
@@ -263,7 +269,7 @@ class Row extends Component {
                 <td>{this.props.data.info}</td>
                 <td>
                     <select name="step" id="selectStatus" className="" onChange={this.changeStatus} value={this.state.status} >
-                        <option value ="状态选择">状态选择</option>
+                        <option value="无">无</option>
                         <option value ="未通过">未通过</option>
                         <option value="通过">通过</option>
                         <option value="待定">待定</option>

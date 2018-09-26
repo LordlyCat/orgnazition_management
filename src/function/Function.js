@@ -17,25 +17,27 @@ class Func extends Component {
         let statementList = this.orz.statement.map((ele, index) =>
             <option value ={ele} key={index}>{ele}</option>
         )
+        let stepList = this.props.stepArr.map((ele, index) =>
+            <option value ={ele} key={index}>{ele}</option>
+        )
         return (
             <div className="func">
         		<select name="statement" id="statement" className="statement" 
         		onChange={this.props.selectModule}>
-                    <option value ='' key='all'>{this.orz.name}</option>
+                    <option value ='' key='allStatement'>{this.orz.name}</option>
         			{statementList}
         		</select>
         		<p>(共有100人)</p>
         		<select name="step" id="step" className="step" onChange={this.props.selectModule}>
-        			<option value ="volvo">Volvo</option>
-  					<option value ="saab">Saab</option>
-  					<option value="opel">Opel</option>
-  					<option value="audi">Audi</option>
+                    <option value ='' key='allStep'>流程进度(全部)</option>
+        			{stepList}
         		</select>
         		<select name="status" id="status" className="status step" onChange={this.props.selectModule}>
-        			<option value ="面试结果">面试结果</option>
+        			<option value ="面试结果">面试结果(全部)</option>
   					<option value ="未通过">未通过</option>
   					<option value="通过">通过</option>
   					<option value="待定">待定</option>
+                    <option value="无">无</option>
         		</select>
         		<input type="text" className="search" placeholder="搜索" />
         		<img src={search} alt=""/>

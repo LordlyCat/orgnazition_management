@@ -60,7 +60,9 @@ class App extends React.Component {
             setStep: '',
             way: '',
             show: false,
-            templateID: ''
+            templateID: '',
+            info: '',
+            stepArr: []
         }
         this.pushList = [];
         this.orz = JSON.parse(localStorage.getItem('orz'));
@@ -72,9 +74,11 @@ class App extends React.Component {
         this.setStep = this.setStep.bind(this);
         this.setWay = this.setWay.bind(this);
         this.selectTemplate = this.selectTemplate.bind(this);
+        this.setInfo = this.setInfo.bind(this);
+        this.getStep = this.getStep.bind(this);
     }
     componentDidMount() {
-
+        this.getStep();
     }
     arrRemove(arr, ele) {
         for (var i = 0; i < arr.length; i++) {
@@ -103,23 +107,30 @@ class App extends React.Component {
         // console.log(this.arrRemove(this.state.pushList, id))
     }
     send() {
+        let that = this;
+        let infoObj = JSON.parse(localStorage.getItem('info'));
+        let infoArr = [];
+        Object.keys(infoObj).forEach(function(key) {
+            if (key === 'setStep') {
+                infoArr.push(that.state.setStep)
+            } else {
+                infoArr.push(infoObj[key]);
+            }
 
+
+        });
+        console.log(Object.keys(infoObj));
         var checkboxArr = document.querySelectorAll('.checkBox');
         for (var i = 0, length1 = checkboxArr.length; i < length1; i++) {
             checkboxArr[i].checked = false;
         }
-        let info_0 = [this.orz.name, this.state.selected.dname, "不知道", "09.27 18:20", "YRX", "1008611", this.state.setStep];
-        let info_1 = [this.orz.name, "haha", "不知道", "09.27 18:20"];
-        let that = this;
-        // let data = {
 
-        // }
         let templateID = this.state.templateID;
         if (this.state.way === 0 && templateID.length === 0) {
             templateID = 'H3VNgVqo3r9ewRi0hhGJDKl_-VBginnIgtFmNyRXeiM';
         }
         if (this.state.way === 1 && templateID.length === 0) {
-            templateID = '200159';
+            templateID = '201497';
         }
         let data = {
             "id": this.pushList,
@@ -127,7 +138,7 @@ class App extends React.Component {
             "tid": templateID, //"H3VNgVqo3r9ewRi0hhGJDKl_-VBginnIgtFmNyRXeiM", //消息模板ID
             "result": null,
             "choose": this.state.way, //推送模式
-            "info": info_0
+            "info": [...infoArr]
         }
         console.log(data);
         //return false;
@@ -145,8 +156,8 @@ class App extends React.Component {
 
                 if (res.response.slice(2, 7) === 'error') {
                     console.log('jwt error', res.response);
-                    alert('登录过期，请重新登录');
-                    window.location = '/#/login';
+                    //alert('登录过期，请重新登录');
+                    //window.location = '/#/login';
                     return
                 }
                 console.log('面试', res.response);
@@ -154,10 +165,41 @@ class App extends React.Component {
                 that.setState({
                     templateID: ''
                 })
+                that.pushList = [];
+                that.getStep();
             }
         })
+    }
+    getStep() {
+        let that = this;
+        ajax({
+            async: true,
+            url: 'https://bmtest.redrock.team/469bba0a564235dfceede42db14f17b0/getcinfo',
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                authorization: localStorage.getItem('authorization')
+            },
+            success: (res) => {
 
-        this.pushList = [];
+                if (res.response.slice(2, 7) === 'error') {
+                    console.log('jwt error', res.response);
+                    //alert('登录过期，请重新登录');
+                    //window.location = '/#/login';
+                    return
+                }
+                console.log('流程', res.response);
+                let arr = res.response.split('"');
+                let stepArr = []
+                for (var i = 1; i < arr.length; i += 2) {
+                    console.log(arr[i]);
+                    stepArr.push(arr[i]);
+                }
+                that.setState({
+                    stepArr: stepArr
+                })
+            }
+        })
     }
     selectModule(e) {
         let selected = this.state.selected;
@@ -202,6 +244,11 @@ class App extends React.Component {
             templateID: e
         })
     }
+    setInfo(info) {
+        this.setState({
+            info: info
+        })
+    }
     render() {
         let show = null;
         if (this.state.show) {
@@ -210,7 +257,8 @@ class App extends React.Component {
             setStep={this.setStep}
             send={this.send}
             setWay={this.setWay}
-            selectTemplate={this.selectTemplate} />
+            selectTemplate={this.selectTemplate}
+            setInfo={this.setInfo} />
         }
         return (
             <div>
@@ -219,6 +267,7 @@ class App extends React.Component {
                 //orgnazition={this.state.orgnazition}
                 //pushList={this.state.pushList}
                 send={this.send}
+                stepArr={this.state.stepArr}
                 showTemplate={this.showTemplate}
                 selectModule={this.selectModule}/>
                 <Table 
