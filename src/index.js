@@ -14,6 +14,8 @@ import {
 } from 'react-router-dom';
 import registerServiceWorker from './registerServiceWorker';
 
+//Ant Design
+import Button from 'antd/lib/button';
 
 class App extends React.Component {
     constructor(props) {
@@ -57,6 +59,8 @@ class App extends React.Component {
                 status: ''
             },
             pushList: [],
+            listTotal: 0,
+            searchKeyword: '',
             setStep: '',
             way: '',
             show: false,
@@ -76,9 +80,14 @@ class App extends React.Component {
         this.selectTemplate = this.selectTemplate.bind(this);
         this.setInfo = this.setInfo.bind(this);
         this.getStep = this.getStep.bind(this);
+        this.setSearchKeyword = this.setSearchKeyword.bind(this);
+        this.getListTotal = this.getListTotal.bind(this);
     }
     componentDidMount() {
         this.getStep();
+        this.getListTotal({
+            oname: this.orz.name
+        });
     }
     arrRemove(arr, ele) {
         for (var i = 0; i < arr.length; i++) {
@@ -119,9 +128,9 @@ class App extends React.Component {
 
 
         });
-        console.log(Object.keys(infoObj));
-        var checkboxArr = document.querySelectorAll('.checkBox');
-        for (var i = 0, length1 = checkboxArr.length; i < length1; i++) {
+        //console.log(Object.keys(infoObj));
+        let checkboxArr = document.querySelectorAll('.checkBox');
+        for (let i = 0, length1 = checkboxArr.length; i < length1; i++) {
             checkboxArr[i].checked = false;
         }
 
@@ -141,7 +150,13 @@ class App extends React.Component {
             "info": [...infoArr]
         }
         console.log(data);
-        //return false;
+        // that.showTemplate();
+        // that.setState({
+        //     templateID: ''
+        // })
+        // that.pushList = [];
+        // that.getStep();
+        // return false;
 
         ajax({
             async: true,
@@ -160,7 +175,7 @@ class App extends React.Component {
                     //window.location = '/#/login';
                     return
                 }
-                console.log('面试', res.response);
+                console.log('推送', res.response);
                 that.showTemplate();
                 that.setState({
                     templateID: ''
@@ -188,11 +203,11 @@ class App extends React.Component {
                     //window.location = '/#/login';
                     return
                 }
-                console.log('流程', res.response);
+                //console.log('流程', res.response);
                 let arr = res.response.split('"');
                 let stepArr = []
                 for (var i = 1; i < arr.length; i += 2) {
-                    console.log(arr[i]);
+                    //console.log(arr[i]);
                     stepArr.push(arr[i]);
                 }
                 that.setState({
@@ -202,26 +217,39 @@ class App extends React.Component {
         })
     }
     selectModule(e) {
+        this.setSearchKeyword('');
         let selected = this.state.selected;
-        if (e.target.id === 'statement') {
-            selected.dname = e.target.value;
-        }
-        if (e.target.id === 'step') {
-            selected.schedule = e.target.value;
-        }
-        if (e.target.id === 'status') {
-            selected.status = e.target.value;
-        }
+        selected.dname = e[0];
+        selected.schedule = e[1];
+        selected.status = e[2];
         this.setState({
             selected: selected
         })
+        let obj = {
+            dname: e[0],
+            info: e[1],
+            result: e[2]
+        }
+        this.getListTotal(obj)
+
+        let firstPage = document.querySelectorAll('a')[1];
+        firstPage.className = 'active';
     }
     showTemplate() {
-        console.log('show');
+        if (this.pushList.length === 0) {
+            alert("未选中任何条目")
+            return;
+        }
         if (this.state.show) {
             this.setState({
                 show: false
-            })
+            });
+
+            this.pushList = [];
+            let checkboxArr = document.querySelectorAll('.checkBox');
+            for (let i = 0, length1 = checkboxArr.length; i < length1; i++) {
+                checkboxArr[i].checked = false;
+            }
         } else {
             this.setState({
                 show: true
@@ -229,7 +257,6 @@ class App extends React.Component {
         }
     }
     setStep(e) {
-        console.log('step', e.target.value);
         this.setState({
             setStep: e.target.value
         })
@@ -249,6 +276,37 @@ class App extends React.Component {
             info: info
         })
     }
+    setSearchKeyword(keyword) {
+        console.log(keyword)
+        this.setState({
+            searchKeyword: keyword
+        })
+    }
+    getListTotal(data) {
+        data.oname = this.orz.name;
+        let that = this;
+        ajax({
+            async: true,
+            url: 'https://bmtest.redrock.team/469bba0a564235dfceede42db14f17b0/basecount',
+            method: 'POST',
+            data: data,
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                authorization: localStorage.getItem('authorization')
+            },
+            success: (res) => {
+                if (res.response.slice(2, 7) === 'error') {
+                    //console.log('jwt error', res.response);
+                    // alert('登录过期，请重新登录');
+                    // window.location = '/#/login';
+                    return
+                }
+                that.setState({
+                    listTotal: res.response
+                })
+            }
+        })
+    }
     render() {
         let show = null;
         if (this.state.show) {
@@ -264,19 +322,20 @@ class App extends React.Component {
             <div>
             	<HeaderInfo />
             	<Func 
-                //orgnazition={this.state.orgnazition}
-                //pushList={this.state.pushList}
                 send={this.send}
                 stepArr={this.state.stepArr}
                 showTemplate={this.showTemplate}
-                selectModule={this.selectModule}/>
+                selectModule={this.selectModule}
+                setSearchKeyword={this.setSearchKeyword}
+                listTotal={this.state.listTotal} />
+
                 <Table 
                 index={this.state.index} 
-                //orgnazition={this.state.orgnazition}
-                //authorization={this.state.authorization}// JWT
+                searchKeyword={this.state.searchKeyword}
                 addPushMessage={this.addPushMessage}
                 deletePushMessage={this.deletePushMessage}
-                selected={this.state.selected}/>
+                selected={this.state.selected}
+                setSearchKeyword={this.setSearchKeyword} />
 
                 {show}
             </div>

@@ -3,6 +3,7 @@ import React, {
 } from 'react';
 import './Table.css';
 import ajax from '../ajax.js';
+import Pagination from 'antd/lib/pagination'
 
 class Table extends Component {
     constructor(props) {
@@ -12,55 +13,75 @@ class Table extends Component {
         this.getlist = this.getList.bind(this);
         this.getPages = this.getPages.bind(this);
         this.goToPage = this.goToPage.bind(this);
-
+        this.ponChange = this.ponChange.bind(this);
+        this.onShowSizeChange = this.onShowSizeChange.bind(this);
         this.state = {
             data: [],
             selected: this.props.selected,
-            pages: 0
+            pages: 0,
+            pageSize: 20,
+            total: 0,
+            current: 1
         }
 
-        //let that = this;
         this.getList({
             oname: this.orz.name,
-            currindex: 1
+            currindex: 1,
+            size: this.state.pageSize
         })
         this.getPages({
-            oname: this.orz.name
+            oname: this.orz.name,
+            size: this.state.pageSize
         })
     }
     componentWillReceiveProps(newProps) {
+        this.setState({
+            current: 1
+        })
         let that = this;
-        console.log('update');
+
+        let searchObj = {};
+        if (newProps.searchKeyword.length > 0) {
+            searchObj.oname = this.orz.name;
+            searchObj.stuname = newProps.searchKeyword;
+            searchObj.currindex = 1;
+            searchObj.size = this.state.pageSize;
+            //this.props.setSearchKeyword('');
+        }
+        console.log('update', searchObj);
         let data = {
             oname: that.orz.name,
-            dname: newProps.selected.dname,
-            currindex: 1
+            currindex: 1,
+            size: this.state.pageSize
         }
-        if (newProps.selected.status.length > 0 && newProps.selected.status.length < 4) {
+        if (newProps.selected.dname.length > 0 && newProps.selected.dname !== this.orz.name) {
+            data.dname = newProps.selected.dname
+        }
+        if (newProps.selected.status.length > 0) {
             data.result = newProps.selected.status
         }
-        if (newProps.selected.schedule.length > 0 && newProps.selected.schedule.length < 4) {
+        if (newProps.selected.schedule.length > 0) {
             data.info = newProps.selected.schedule
         }
+
+        if (searchObj.stuname) {
+            data = searchObj
+        }
+        console.log(data);
         this.getList(data);
-        this.getPages({
-            oname: this.orz.name,
-            dname: newProps.selected.dname
-        })
+        this.getPages(data);
         return true;
     }
 
     componentDidMount() {
         this.getPages({
-            oname: this.orz.name
+            oname: this.orz.name,
+            size: this.state.pageSize
         })
     }
-    // handleChange(event) {
-    //     console.log(event.target.value)
-    //     this.props.change();
-    // }
     getList(data) {
         let that = this;
+        console.log(data);
         //oname, dname, currindex, result, info, status
         // {
         //     oname: oname,//组织名
@@ -111,19 +132,36 @@ class Table extends Component {
                     // window.location = '/#/login';
                     return
                 }
-                //console.log('pages', res.response);
+                console.log('pages', res.response);
                 that.setState({
-                    pages: parseInt(res.response, 10)
+                    pages: parseInt(res.response, 10),
+                    total: parseInt(res.response, 10) * data.size
                 })
             }
         })
     }
     goToPage(currindex) {
-        let data = {};
+        let data = {
+            size: this.state.pageSize
+        };
         data.oname = this.orz.name;
-        data.currindex = ++currindex.i;
-        //console.log(data);
+        if (currindex === 1) {
+            data.currindex = 1
+        } else {
+            data.currindex = ++currindex.i;
+        }
+
+        if (this.state.selected.dname.length > 0) {
+            data.dname = this.state.selected.dname
+        }
+        if (this.state.selected.status.length > 0) {
+            data.result = this.state.selected.status
+        }
+        if (this.state.selected.schedule.length > 0) {
+            data.info = this.state.selected.schedule
+        }
         this.getList(data);
+
         let pageArr = document.querySelectorAll('a');
         for (var i = 0; i < pageArr.length; i++) {
             if (i === data.currindex) {
@@ -132,7 +170,56 @@ class Table extends Component {
                 pageArr[i].className = '';
             }
         }
+    }
+    ponChange(page, pageSize) {
+        this.setState({
+            current: page
+        })
+        console.log(page, pageSize)
+        let data = {
+            size: pageSize,
+            currindex: page
+        };
+        data.oname = this.orz.name;
+        // if (currindex === 1) {
+        //     data.currindex = 1
+        // } else {
+        //     data.currindex = ++currindex.i;
+        // }
 
+        if (this.state.selected.dname.length > 0 && this.state.selected.dname !== this.orz.name) {
+            data.dname = this.state.selected.dname
+        }
+        if (this.state.selected.status.length > 0) {
+            data.result = this.state.selected.status
+        }
+        if (this.state.selected.schedule.length > 0) {
+            data.info = this.state.selected.schedule
+        }
+        this.getList(data);
+    }
+    onShowSizeChange(current, size) {
+        this.setState({
+            pageSize: size
+        })
+        console.log(current, size, this.state.total)
+        let that = this;
+        let data = {
+            oname: that.orz.name,
+            currindex: 1,
+            size: size
+        }
+        if (this.state.selected.dname.length > 0 && this.state.selected.dname !== this.orz.name) {
+            data.dname = this.state.selected.dname
+        }
+        if (this.state.selected.status.length > 0) {
+            data.result = this.state.selected.status
+        }
+        if (this.state.selected.schedule.length > 0) {
+            data.info = this.state.selected.schedule
+        }
+        this.ponChange(current, size);
+        this.getPages(data);
     }
     render() {
         let data = this.state.data;
@@ -181,6 +268,15 @@ class Table extends Component {
                     </table>
                 </div>
                 <Pagination 
+                current={this.state.current}
+                total={this.state.total}
+                showSizeChanger={true}
+                defaultPageSize={20}
+                pageSizeOptions={['10', '20', '30', '40', '50']}
+                onChange={this.ponChange}
+                onShowSizeChange={this.onShowSizeChange} />
+
+                <MyPagination 
                 orz={this.orz}
                 pages={this.state.pages}
                 getList={this.getList}
@@ -200,7 +296,6 @@ class Row extends Component {
             result = '状态选择'
         }
         this.state = {
-            selected: false,
             status: result
         }
         //console.log(this.state)
@@ -208,16 +303,10 @@ class Row extends Component {
         this.changeStatus = this.changeStatus.bind(this);
     }
     handleChange(event) {
-        //console.log(event.target.value)
-        if (this.state.selected) {
-            this.setState({
-                selected: false
-            })
+        console.log('checkbox', event.target.value, event.target.checked)
+        if (!event.target.checked) {
             this.props.deletePushMessage(event.target.value);
         } else {
-            this.setState({
-                selected: true
-            })
             this.props.addPushMessage(event.target.value);
         }
     }
@@ -281,23 +370,19 @@ class Row extends Component {
     }
 }
 
-class Pagination extends Component {
+class MyPagination extends Component {
     constructor(props) {
         super(props);
+        this.myRef = React.createRef();
         //this.goToPage = this.goToPage.bind(this);
     }
-    // goToPage(currindex) {
-    //     let data = {};
-    //     data.oname = this.props.orz.name;
-    //     data.currindex = ++currindex.i;
-    //     //console.log(data);
-    //     this.props.getList(data)
-    // }
     render() {
+        //console.log('p up', this.props.pages)
         let list = [];
-        for (let i = 0; i < this.props.pages; i++) {
+        for (let i = 1; i < this.props.pages; i++) {
             if (i === 0) {
-                list[i] = <li key={i}><a className="active" onClick={this.props.goToPage.bind(this, {i})}>{i + 1}</a></li>;
+                list[i] = <li key={i}><a ref={this.myRef} className="active" onClick={this.props.goToPage.bind(this, {i})}>{i + 1}</a></li>;
+                console.log('active', list[i]);
                 continue;
             }
             list[i] = <li key={i}><a onClick={this.props.goToPage.bind(this, {i})}>{i + 1}</a></li>
@@ -305,6 +390,7 @@ class Pagination extends Component {
         return (
             <ul className="pagination">
                 <li><a>«</a></li>
+                <li key={0}><a className="active" onClick={this.props.goToPage.bind(this, 1)}>1</a></li>
                 {list}
                 <li><a>»</a></li>
             </ul>

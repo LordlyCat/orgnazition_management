@@ -16,7 +16,9 @@ p{
 	float: left;
 	display: inline-block;
 	margin-left: 1%;
-	margin-top: 20px;
+	margin-top: 0px;
+	font-size: 16px;
+	line-height: 30px;
 }
 
 select.step{
@@ -31,35 +33,48 @@ select.step{
 	float: left;
 	width: 150px;
 	height: 30px;
-	margin-top: 13px;
+	padding-left: 10px;
 	margin-left: 2%;
+	outline: none;
+	border: solid 1px lightgray;
+	border-right: none;
 }
 
-.searchLogo {
+/*.searchLogo {
 	display: inline-block;
 	overflow: hidden;
 	margin-top: 0px;
+}*/
+
+.searchImg{
+	cursor: pointer;
 }
 
 img {
 	float: left;
-	width: 30px;
-	margin-top: 14px;
-	margin-left: 5px;
+	width: 29px;
+	margin-left: 0px;
+	border: solid 1px lightgray;
+	border-left: none;
 }
 
 .btnWrapper{
 	float: right;
 	display: inline-block;
 	width: 26%;
-	margin-right: 3%;
-	margin-top: 15px;
+	margin-right: 2%;
 }
 
 .btnWrapper button{
+	float: right;
 	width: 19%;
 	height: 30px;
 	margin-left: 1%;
 }
 
+.cascader{
+	float: left;
+	margin-left: 40px;
+	width: 300px;
+}
 

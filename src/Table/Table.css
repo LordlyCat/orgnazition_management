@@ -45,6 +45,7 @@ td {
 th {
 	position: relative;
     width: 14%;
+    text-align: center;
 }
 
 td {
@@ -55,6 +56,11 @@ tr:hover{
 	opacity: 0.5;
 	background: lightgray;
 	color: black;
+}
+
+.checkBox{
+	width: 25px;
+	cursor: pointer;
 }
 
 .username,
@@ -82,7 +88,7 @@ ul.pagination li {
 ul.pagination li a {
     color: black;
     float: left;
-    color: white;
+    color: black;
     padding: 8px 16px;
     text-decoration: none;
     transition: background-color .3s;

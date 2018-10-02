@@ -71,7 +71,7 @@ class Login extends Component {
         }
         return (
             <div id="login">
-                <div className="title">组织报名系统后台管理</div>
+                <div className="title">组织报名系统后台管理（测试版）</div>
                 <input type="text" value={this.state.oname} onChange={this.handleChange} />
                 <input type="password" value={this.state.password} onChange={this.handleChange} />
                 <input type="submit" value="Login" onClick={this.handleSubmit} />

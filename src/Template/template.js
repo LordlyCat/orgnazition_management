@@ -136,8 +136,8 @@ class Txbs_1 extends Component {
         this.getState = this.getState.bind(this);
         this.info = {
             setStep: '',
-            time: '',
             location: '',
+            time: '',
             contactName: '',
             contactPhone: ''
         }

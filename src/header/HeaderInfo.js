@@ -3,14 +3,17 @@ import React, {
 } from 'react';
 import './HeaderInfo.css';
 import ajax from '../ajax.js';
+import Button from 'antd/lib/button';
+import Icon from 'antd/lib/icon';
 
 class HeaderInfo extends Component {
     constructor() {
         super()
+        this.orz = JSON.parse(localStorage.getItem('orz'));
         this.state = {
             totalNumber: null,
             trueTotal: null,
-            recharge: 30000
+            recharge: '--'
         }
 
         let that = this;
@@ -42,7 +45,9 @@ class HeaderInfo extends Component {
             async: true,
             url: 'https://bmtest.redrock.team/469bba0a564235dfceede42db14f17b0/usercount',
             method: 'POST',
-            data: {},
+            data: {
+                oname: this.orz.name
+            },
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
                 authorization: localStorage.getItem('authorization')
@@ -51,8 +56,8 @@ class HeaderInfo extends Component {
                 console.log('getList');
                 if (res.response.slice(2, 7) === 'error') {
                     console.log('jwt error');
-                    alert('登录过期，请重新登录');
-                    window.location = '/#/login';
+                    // alert('登录过期，请重新登录');
+                    // window.location = '/#/login';
                     return
                 }
                 that.setState({
@@ -62,6 +67,11 @@ class HeaderInfo extends Component {
         })
 
     }
+    quit() {
+        localStorage.setItem('orz', '');
+        localStorage.setItem('authorization', '');
+        window.location = '/#/login';
+    }
     render() {
         return (
             <div className="headerInfo">
@@ -69,8 +79,9 @@ class HeaderInfo extends Component {
                 <div className="total">总报名人次：{this.state.totalNumber}</div>
                 <div className="total">总报名人数：{this.state.trueTotal}</div>
                 <div className="total">可发短信数：{this.state.recharge}</div>
-                <button className="recharge">前往充值</button>
-                <button className="quit">退出当前账号</button>
+                
+                <Button type="dashed" className="quit" onClick={this.quit}>退出当前账号</Button>
+                <Icon type="star" theme="filled" />
             </div>
         );
     }

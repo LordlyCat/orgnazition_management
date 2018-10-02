@@ -1,21 +1,3 @@
-// let ajax = (opinion) => {
-//     let opt = opinion;
-//     let ajax = new XMLHttpRequest();
-//     ajax.onreadystatechange = function() {
-//         if (ajax.readyState === 4 && ajax.status === 200) {
-//             var response = ajax;
-//             //console.log(ajax.getAllResponseHeaders())
-//             opt.success(response);
-//         }
-//     };
-//     ajax.open(opt.method, opt.url, opt.async);
-//     ajax.setRequestHeader("Content-type", opt.header);
-//     ajax.send(opt.data);
-// }
-
-// module.exports = ajax;
-
-
 function ajax(opts) {
 
     var defaults = {
@@ -33,13 +15,13 @@ function ajax(opts) {
     };
 
     //2.覆盖参数
-    for (var key in opts) {
+    for (let key in opts) {
         defaults[key] = opts[key];
     };
 
     if (typeof defaults.data === 'object') {
         var str = '';
-        for (var key in defaults.data) {
+        for (let key in defaults.data) {
             str += key + '=' + defaults.data[key] + '&'
         }
         defaults.data = str.substring(0, str.length - 1);
@@ -80,19 +62,5 @@ function ajax(opts) {
     };
 
 };
-
-// let ajax = (opinion) => {
-//     let opt = opinion;
-//     let ajax = new XMLHttpRequest();
-//     ajax.onreadystatechange = function() {
-//         if (ajax.readyState === 4 && ajax.status === 200) {
-//             var response = ajax.responseText;
-//             opt.success(response);
-//         }
-//     };
-//     ajax.open(opt.method, opt.url, opt.async);
-//     ajax.setRequestHeader("Content-type", opt.header);
-//     ajax.send(opt.data);
-// }
 
 module.exports = ajax;
