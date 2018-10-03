@@ -15,6 +15,7 @@ class Table extends Component {
         this.goToPage = this.goToPage.bind(this);
         this.ponChange = this.ponChange.bind(this);
         this.onShowSizeChange = this.onShowSizeChange.bind(this);
+        this.selectAll = this.selectAll.bind(this);
         this.state = {
             data: [],
             selected: this.props.selected,
@@ -78,6 +79,24 @@ class Table extends Component {
             oname: this.orz.name,
             size: this.state.pageSize
         })
+    }
+    componentDidUpdate() {
+        let pushList = this.props.getPushList();
+        let arr = document.querySelectorAll('.checkBox')
+        let ifAll = true;
+        arr.forEach((element, index) => {
+            if (pushList.has(element.value)) {
+                element.checked = true;
+            } else {
+                ifAll = false;
+            }
+        });
+
+        if (ifAll) {
+            document.querySelector('#selectAll').checked = true;
+        } else {
+            document.querySelector('#selectAll').checked = false;
+        }
     }
     getList(data) {
         let that = this;
@@ -197,6 +216,7 @@ class Table extends Component {
             data.info = this.state.selected.schedule
         }
         this.getList(data);
+
     }
     onShowSizeChange(current, size) {
         this.setState({
@@ -220,6 +240,22 @@ class Table extends Component {
         }
         this.ponChange(current, size);
         this.getPages(data);
+    }
+    selectAll(event) {
+        if (event.target.checked) {
+            let arr = document.querySelectorAll('.checkBox');
+            for (var i = 0; i < arr.length; i++) {
+                arr[i].checked = true;
+                this.props.addPushMessage(arr[i].value);
+            }
+        } else {
+            let arr = document.querySelectorAll('.checkBox');
+            for (var i = 0; i < arr.length; i++) {
+                arr[i].checked = false;
+                this.props.deletePushMessage(arr[i].value);
+            }
+        }
+
     }
     render() {
         let data = this.state.data;
@@ -253,7 +289,12 @@ class Table extends Component {
                     <table cellSpacing="0">
                         <tbody>
                             <tr>
-                                <th className="selects"><span id="all">全选</span><input className="checkBox" type="checkbox" name="selectAll" /></th>
+                                <th className="selects"><span id="all">全选</span><input className="selectAll" 
+                                id="selectAll"
+                                type="checkbox"
+                                name="selectAll" 
+                                value="all"
+                                onChange={this.selectAll} /></th>
                                 <th className="index">序号</th>
                                 <th className="stateName">部门</th>
                                 <th className="username">姓名</th>
@@ -267,7 +308,9 @@ class Table extends Component {
                         </tbody>
                     </table>
                 </div>
-                <Pagination 
+
+                <Pagination
+                className="pagination" 
                 current={this.state.current}
                 total={this.state.total}
                 showSizeChanger={true}
@@ -275,12 +318,6 @@ class Table extends Component {
                 pageSizeOptions={['10', '20', '30', '40', '50']}
                 onChange={this.ponChange}
                 onShowSizeChange={this.onShowSizeChange} />
-
-                <MyPagination 
-                orz={this.orz}
-                pages={this.state.pages}
-                getList={this.getList}
-                goToPage={this.goToPage}/>
             </div>
         )
     }
@@ -303,7 +340,7 @@ class Row extends Component {
         this.changeStatus = this.changeStatus.bind(this);
     }
     handleChange(event) {
-        console.log('checkbox', event.target.value, event.target.checked)
+        //console.log('checkbox', event.target.value, event.target.checked)
         if (!event.target.checked) {
             this.props.deletePushMessage(event.target.value);
         } else {

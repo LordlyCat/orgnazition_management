@@ -51,6 +51,8 @@ class App extends React.Component {
         }];
 
         localStorage.setItem('orz', JSON.stringify(this.allOrz[0]));
+
+        let pushListSet = new Set()
         this.state = {
             //orgnazition: '',
             selected: {
@@ -58,7 +60,7 @@ class App extends React.Component {
                 schedule: '',
                 status: ''
             },
-            pushList: [],
+            //pushList: pushListSet,
             listTotal: 0,
             searchKeyword: '',
             setStep: '',
@@ -68,7 +70,7 @@ class App extends React.Component {
             info: '',
             stepArr: []
         }
-        this.pushList = [];
+        this.pushList = pushListSet;
         this.orz = JSON.parse(localStorage.getItem('orz'));
         this.addPushMessage = this.addPushMessage.bind(this);
         this.deletePushMessage = this.deletePushMessage.bind(this);
@@ -82,6 +84,7 @@ class App extends React.Component {
         this.getStep = this.getStep.bind(this);
         this.setSearchKeyword = this.setSearchKeyword.bind(this);
         this.getListTotal = this.getListTotal.bind(this);
+        this.getPushList = this.getPushList.bind(this);
     }
     componentDidMount() {
         this.getStep();
@@ -98,24 +101,19 @@ class App extends React.Component {
         }
         return arr;
     }
-    addPushMessage(id) {
+    addPushMessage(id) { //添加消息推送
+        this.pushList.add(id);
         console.log(this.pushList)
-        let arr = this.pushList;
-        arr.push(id);
-        this.pushList = arr;
-        // this.setState({
-        //     pushList: arr
-        // })
     }
-    deletePushMessage(id) {
-        //this.arrRemove(this.state.pushList, id)
-        this.pushList = this.arrRemove(this.pushList, id);
-        // this.setState({
-        //     pushList: this.arrRemove(this.state.pushList, id)
-        // })
-        // console.log(this.arrRemove(this.state.pushList, id))
+    deletePushMessage(id) { //删除消息推送
+        this.pushList.delete(id);
+        //this.pushList = this.arrRemove(this.pushList, id);
+        document.querySelector('#selectAll').checked = false;
     }
-    send() {
+    getPushList() { //获取消息推送列表
+        return this.pushList;
+    }
+    send() { //推送消息
         let that = this;
         let infoObj = JSON.parse(localStorage.getItem('info'));
         let infoArr = [];
@@ -125,8 +123,6 @@ class App extends React.Component {
             } else {
                 infoArr.push(infoObj[key]);
             }
-
-
         });
         //console.log(Object.keys(infoObj));
         let checkboxArr = document.querySelectorAll('.checkBox');
@@ -142,7 +138,7 @@ class App extends React.Component {
             templateID = '201497';
         }
         let data = {
-            "id": this.pushList,
+            "id": Array.from(this.pushList),
             "beizhu": this.state.setStep,
             "tid": templateID, //"H3VNgVqo3r9ewRi0hhGJDKl_-VBginnIgtFmNyRXeiM", //消息模板ID
             "result": null,
@@ -180,7 +176,7 @@ class App extends React.Component {
                 that.setState({
                     templateID: ''
                 })
-                that.pushList = [];
+                that.pushList = new Set();
                 that.getStep();
             }
         })
@@ -236,7 +232,11 @@ class App extends React.Component {
         firstPage.className = 'active';
     }
     showTemplate() {
-        if (this.pushList.length === 0) {
+        if (this.pushList.size > 50) {
+            alert('单次推送数量不能超过50, 当前已选' + this.pushList.size);
+            return;
+        }
+        if (this.pushList.size === 0) {
             alert("未选中任何条目")
             return;
         }
@@ -245,7 +245,7 @@ class App extends React.Component {
                 show: false
             });
 
-            this.pushList = [];
+            this.pushList = new Set();
             let checkboxArr = document.querySelectorAll('.checkBox');
             for (let i = 0, length1 = checkboxArr.length; i < length1; i++) {
                 checkboxArr[i].checked = false;
@@ -335,7 +335,8 @@ class App extends React.Component {
                 addPushMessage={this.addPushMessage}
                 deletePushMessage={this.deletePushMessage}
                 selected={this.state.selected}
-                setSearchKeyword={this.setSearchKeyword} />
+                setSearchKeyword={this.setSearchKeyword}
+                getPushList={this.getPushList} />
 
                 {show}
             </div>
