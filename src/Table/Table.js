@@ -21,39 +21,47 @@ class Table extends Component {
             selected: this.props.selected,
             pages: 0,
             pageSize: 20,
-            total: 0,
-            current: 1
+            total: 0
+            //current: 1
         }
+        this.pageSize = 20;
 
         this.getList({
             oname: this.orz.name,
             currindex: 1,
-            size: this.state.pageSize
+            size: this.pageSize
         })
         this.getPages({
             oname: this.orz.name,
-            size: this.state.pageSize
+            size: this.pageSize
         })
     }
     componentWillReceiveProps(newProps) {
-        this.setState({
-            current: 1
-        })
+        // this.setState({
+        //     current: 1
+        // })
         let that = this;
 
         let searchObj = {};
         if (newProps.searchKeyword.length > 0) {
-            searchObj.oname = this.orz.name;
-            searchObj.stuname = newProps.searchKeyword;
-            searchObj.currindex = 1;
-            searchObj.size = this.state.pageSize;
-            //this.props.setSearchKeyword('');
+            if (isNaN(newProps.searchKeyword)) {
+                searchObj.oname = this.orz.name;
+                searchObj.stuname = newProps.searchKeyword;
+                searchObj.currindex = 1;
+                searchObj.size = this.pageSize;
+            } else {
+                searchObj.oname = this.orz.name;
+                searchObj.stuid = newProps.searchKeyword;
+                searchObj.currindex = 1;
+                searchObj.size = this.pageSize;
+            }
+
         }
-        console.log('update', searchObj);
+        //console.log('update', searchObj);
         let data = {
             oname: that.orz.name,
-            currindex: 1,
-            size: this.state.pageSize
+            currindex: newProps.current,
+            size: this.pageSize
         }
         if (newProps.selected.dname.length > 0 && newProps.selected.dname !== this.orz.name) {
             data.dname = newProps.selected.dname
@@ -68,7 +76,10 @@ class Table extends Component {
         if (searchObj.stuname) {
             data = searchObj
         }
-        console.log(data);
+        if (searchObj.stuid) {
+            data = searchObj
+        }
+        //console.log('update', data);
         this.getList(data);
         this.getPages(data);
         return true;
@@ -77,7 +88,7 @@ class Table extends Component {
     componentDidMount() {
         this.getPages({
             oname: this.orz.name,
-            size: this.state.pageSize
+            size: this.pageSize
         })
     }
     componentDidUpdate() {
@@ -100,7 +111,7 @@ class Table extends Component {
     }
     getList(data) {
         let that = this;
-        console.log(data);
+        //console.log(data);
         //oname, dname, currindex, result, info, status
         // {
         //     oname: oname,//组织名
@@ -151,7 +162,7 @@ class Table extends Component {
                     // window.location = '/#/login';
                     return
                 }
-                console.log('pages', res.response);
+                //console.log('pages', res.response);
                 that.setState({
                     pages: parseInt(res.response, 10),
                     total: parseInt(res.response, 10) * data.size
@@ -161,7 +172,7 @@ class Table extends Component {
     }
     goToPage(currindex) {
         let data = {
-            size: this.state.pageSize
+            size: this.pageSize
         };
         data.oname = this.orz.name;
         if (currindex === 1) {
@@ -191,20 +202,15 @@ class Table extends Component {
         }
     }
     ponChange(page, pageSize) {
-        this.setState({
-            current: page
-        })
-        console.log(page, pageSize)
+        // this.setState({
+        //     current: page
+        // })
+        //console.log(page, pageSize)
         let data = {
             size: pageSize,
             currindex: page
         };
         data.oname = this.orz.name;
-        // if (currindex === 1) {
-        //     data.currindex = 1
-        // } else {
-        //     data.currindex = ++currindex.i;
-        // }
 
         if (this.state.selected.dname.length > 0 && this.state.selected.dname !== this.orz.name) {
             data.dname = this.state.selected.dname
@@ -216,13 +222,14 @@ class Table extends Component {
             data.info = this.state.selected.schedule
         }
         this.getList(data);
-
+        this.props.setCurrent(page);
     }
     onShowSizeChange(current, size) {
-        this.setState({
-            pageSize: size
-        })
-        console.log(current, size, this.state.total)
+        this.pageSize = size
+        // this.setState({
+        //     pageSize: size
+        // })
+        //console.log(current, size, this.state.total)
         let that = this;
         let data = {
             oname: that.orz.name,
@@ -245,6 +252,9 @@ class Table extends Component {
         if (event.target.checked) {
             let arr = document.querySelectorAll('.checkBox');
             for (var i = 0; i < arr.length; i++) {
+                if (arr[i].disabled) {
+                    continue;
+                }
                 arr[i].checked = true;
                 this.props.addPushMessage(arr[i].value);
             }
@@ -260,7 +270,7 @@ class Table extends Component {
     render() {
         let data = this.state.data;
         let dataArr = [];
-
+        //console.log('ccc', this.props.current)
         if (typeof(data) === 'string') {
             dataArr = data.split('[')[1].split(']')[0].split('{').slice(1);
             //console.log(dataArr)
@@ -311,7 +321,7 @@ class Table extends Component {
 
                 <Pagination
                 className="pagination" 
-                current={this.state.current}
+                current={this.props.current}
                 total={this.state.total}
                 showSizeChanger={true}
                 defaultPageSize={20}
@@ -353,10 +363,10 @@ class Row extends Component {
         let data = {
             "id": [this.props.data.cid],
             "beizhu": '',
-            "tid": "H3VNgVqo3r9ewRi0hhGJDKl_-VBginnIgtFmNyRXeiM",
+            "tid": "",
             "result": status,
             "choose": -1,
-            "info": ["test1", "test2", "test3", "test4", "test5", "test6", "test7"]
+            "info": []
         }
         let that = this;
         ajax({
@@ -376,7 +386,7 @@ class Row extends Component {
                     window.location = '/#/login';
                     return
                 }
-                console.log('面试', res.response);
+                //console.log('面试', res.response);
                 that.setState({
                     status: status
                 })
@@ -384,9 +394,25 @@ class Row extends Component {
         })
     }
     render() {
+        let status = ''
+        let style = {};
+        let disabled = false;
+        if (this.props.data.status === 1) {
+            status = '成功';
+        }
+        if (this.props.data.status === 2) {
+            status = '失败';
+            style = {
+                color: 'red'
+            }
+        }
+
+        if (this.state.status === '拉黑') {
+            disabled = true;
+        }
         return (
             <tr>
-                <td><input className="checkBox" type="checkbox" name="select" value={this.props.data.cid} onChange={this.handleChange}/></td>
+                <td><input disabled={disabled} className="checkBox" type="checkbox" name="select" value={this.props.data.cid} onChange={this.handleChange}/></td>
                 <td>{this.props.data.index}</td>
                 <td>{this.props.data.dname}</td>
                 <td>{this.props.data.stuname}</td>
@@ -399,9 +425,10 @@ class Row extends Component {
                         <option value ="未通过">未通过</option>
                         <option value="通过">通过</option>
                         <option value="待定">待定</option>
+                        <option value="拉黑">拉黑</option>
                     </select>
                 </td>
-                <td>{this.props.data.status}</td>
+                <td style={style}>{status}</td>
             </tr>
         )
     }
@@ -419,7 +446,7 @@ class MyPagination extends Component {
         for (let i = 1; i < this.props.pages; i++) {
             if (i === 0) {
                 list[i] = <li key={i}><a ref={this.myRef} className="active" onClick={this.props.goToPage.bind(this, {i})}>{i + 1}</a></li>;
-                console.log('active', list[i]);
+                //console.log('active', list[i]);
                 continue;
             }
             list[i] = <li key={i}><a onClick={this.props.goToPage.bind(this, {i})}>{i + 1}</a></li>

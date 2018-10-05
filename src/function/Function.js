@@ -45,6 +45,9 @@ class Func extends Component {
                     }, {
                         value: '待定',
                         label: '待定',
+                    }, {
+                        value: '拉黑',
+                        label: '拉黑',
                     }],
                 }],
             }, ...stepInfoArr]
@@ -94,6 +97,9 @@ class Func extends Component {
                     }, {
                         value: '待定',
                         label: '待定',
+                    }, {
+                        value: '拉黑',
+                        label: '拉黑',
                     }],
                 }];
                 for (var i = 1; i < arr.length; i += 2) {
@@ -115,6 +121,9 @@ class Func extends Component {
                         }, {
                             value: '待定',
                             label: '待定',
+                        }, {
+                            value: '拉黑',
+                            label: '拉黑',
                         }],
                     }
                     stepInfoArr.push(obj);
@@ -153,8 +162,8 @@ class Func extends Component {
         })
     }
     onChange(value, selected) {
-        console.log(this.state.cascaderOptions)
-        console.log(value);
+        // console.log(this.state.cascaderOptions)
+        // console.log(value);
     }
     render() {
         let statementList = this.orz.statement.map((ele, index) =>
@@ -164,23 +173,25 @@ class Func extends Component {
             <option value ={ele} key={index}>{ele}</option>
         )
         return (
-            <div className="func">
-                <Cascader className="cascader" 
-                allowClear={false}
-                expandTrigger='hover'
-                defaultValue={[this.orz.name, '', '']} 
-                options={this.state.cascaderOptions} 
-                onChange={this.props.selectModule} />
+            <div className="funcWrapper">
+                <div className="func">
+                    <Cascader className="cascader" 
+                    allowClear={false}
+                    expandTrigger='hover'
+                    defaultValue={[this.orz.name, '', '']} 
+                    options={this.state.cascaderOptions} 
+                    onChange={this.props.selectModule} />
 
-                <p>（共{this.props.listTotal}人次）</p>
-        		<input type="text" className="search" placeholder="搜索姓名或学号" value={this.state.keyword} onChange={this.getKeyword} />
-        		<img src={search} className="searchImg" alt="" onClick={this.search} />
-        		<div className="btnWrapper">
-        			
-        			<Button onClick={this.props.showTemplate}>推送</Button>
-        		</div>
+                    <p>（共{this.props.listTotal}人次）</p>
+            		<input type="text" className="search" placeholder="搜索姓名或学号" value={this.state.keyword} onChange={this.getKeyword} />
+            		<img src={search} className="searchImg" alt="" onClick={this.search} />
+            		<div className="btnWrapper">
+            			
+            			<Button onClick={this.props.showTemplate}>推送</Button>
+            		</div>
 
-        	</div>
+            	</div>
+            </div>
         )
     }
 }

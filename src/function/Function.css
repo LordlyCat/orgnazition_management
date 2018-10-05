@@ -1,6 +1,13 @@
+.funcWrapper{
+	border-bottom: solid 1px black;
+}
+
 .func{
-	height: 60px;
+	height: 40px;
 	position: relative;
+	margin: 0 auto;
+	min-width: 1080px;
+    max-width: 1600px;
 /*	overflow: hidden;
 */}
 
@@ -62,7 +69,7 @@ img {
 	float: right;
 	display: inline-block;
 	width: 26%;
-	margin-right: 2%;
+	margin-right: 10px;
 }
 
 .btnWrapper button{
@@ -74,7 +81,7 @@ img {
 
 .cascader{
 	float: left;
-	margin-left: 40px;
+	margin-left: 10px;
 	width: 300px;
 }
 

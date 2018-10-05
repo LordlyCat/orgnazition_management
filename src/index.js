@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
+import './loaders.min.css';
 import ajax from './ajax.js';
 import HeaderInfo from './header/HeaderInfo.js';
 import Func from './function/Function.js';
@@ -17,50 +18,20 @@ import registerServiceWorker from './registerServiceWorker';
 //Ant Design
 import Button from 'antd/lib/button';
 
+var Loader = require('react-loaders').Loader;
+
+
 class App extends React.Component {
     constructor(props) {
         super(props);
-        //console.log(localStorage.getItem('authorization'))
-        this.allOrz = [{
-            name: "红岩网校工作站",
-            statement: ['产品策划及运营部', '视觉设计部', 'Web研发部', '移动开发部', '运维安全部']
-        }, {
-            name: "校团委宣传部",
-            statement: ['校团委宣传部']
-        }, {
-            name: "校团委组织部",
-            statement: ['校团委组织部']
-        }, {
-            name: "校团委办公室",
-            statement: ['校团委办公室']
-        }, {
-            name: "校学生会",
-            statement: ['综合部', '学习部', '宣传部', '权益提案部', '生活服务部', '文艺部', '体育部', '女生部']
-        }, {
-            name: "学生科技联合会",
-            statement: ['综合部', '科技人文部', '项目管理部', '媒体运营部', '科创竞赛部', '信息部']
-        }, {
-            name: "青年志愿者协会",
-            statement: ['综合管理部', '青年志愿者服务总队', '实践服务部', '宣传推广部']
-        }, {
-            name: "大学生艺术团",
-            statement: ['管乐团', '民乐团', '舞蹈团', '合唱团', '话剧团', '综合部']
-        }, {
-            name: "学生社团联合会",
-            statement: ['综合部', '宣传部', '社团服务部', '社团活动部']
-        }];
-
-        localStorage.setItem('orz', JSON.stringify(this.allOrz[0]));
 
         let pushListSet = new Set()
         this.state = {
-            //orgnazition: '',
             selected: {
                 dname: '',
                 schedule: '',
                 status: ''
             },
-            //pushList: pushListSet,
             listTotal: 0,
             searchKeyword: '',
             setStep: '',
@@ -68,7 +39,9 @@ class App extends React.Component {
             show: false,
             templateID: '',
             info: '',
-            stepArr: []
+            stepArr: [],
+            over: false,
+            current: 1
         }
         this.pushList = pushListSet;
         this.orz = JSON.parse(localStorage.getItem('orz'));
@@ -85,6 +58,8 @@ class App extends React.Component {
         this.setSearchKeyword = this.setSearchKeyword.bind(this);
         this.getListTotal = this.getListTotal.bind(this);
         this.getPushList = this.getPushList.bind(this);
+        this.showLoader = this.showLoader.bind(this);
+        this.setCurrent = this.setCurrent.bind(this);
     }
     componentDidMount() {
         this.getStep();
@@ -103,7 +78,7 @@ class App extends React.Component {
     }
     addPushMessage(id) { //添加消息推送
         this.pushList.add(id);
-        console.log(this.pushList)
+        //console.log(this.pushList)
     }
     deletePushMessage(id) { //删除消息推送
         this.pushList.delete(id);
@@ -135,8 +110,23 @@ class App extends React.Component {
             templateID = 'H3VNgVqo3r9ewRi0hhGJDKl_-VBginnIgtFmNyRXeiM';
         }
         if (this.state.way === 1 && templateID.length === 0) {
-            templateID = '201497';
+            templateID = '202577';
         }
+
+        let ifOver = false;
+        if (this.state.way === 1) {
+            Object.keys(infoObj).forEach(function(key) {
+                if (infoObj[key].length > 12) {
+                    ifOver = true;
+                }
+            })
+        }
+
+        if (ifOver) {
+            alert('字符长度不能超过12个单位');
+            return false;
+        }
+
         let data = {
             "id": Array.from(this.pushList),
             "beizhu": this.state.setStep,
@@ -145,14 +135,18 @@ class App extends React.Component {
             "choose": this.state.way, //推送模式
             "info": [...infoArr]
         }
-        console.log(data);
+        //console.log(data);
+        this.showLoader();
+        // setTimeout(() => {
+        //     this.showLoader();
+        // }, 5000)
         // that.showTemplate();
         // that.setState({
         //     templateID: ''
         // })
-        // that.pushList = [];
+        // that.pushList = new Set();
         // that.getStep();
-        // return false;
+        //return false;
 
         ajax({
             async: true,
@@ -169,17 +163,21 @@ class App extends React.Component {
                     console.log('jwt error', res.response);
                     //alert('登录过期，请重新登录');
                     //window.location = '/#/login';
+                    this.showLoader();
                     return
                 }
-                console.log('推送', res.response);
-                that.showTemplate();
-                that.setState({
-                    templateID: ''
-                })
-                that.pushList = new Set();
-                that.getStep();
+                //console.log('推送', JSON.parse(res.response));
+                let resData = JSON.parse(res.response);
+                this.showLoader();
+                alert('一共推送了' + resData['总数'] + '条，成功' + resData['成功'] + '条，失败' + resData['失败'] + '条');
             }
+        });
+        that.showTemplate();
+        that.setState({
+            templateID: ''
         })
+        that.pushList = new Set();
+        that.getStep();
     }
     getStep() {
         let that = this;
@@ -226,8 +224,8 @@ class App extends React.Component {
             info: e[1],
             result: e[2]
         }
-        this.getListTotal(obj)
-
+        this.getListTotal(obj);
+        this.setCurrent(1);
         let firstPage = document.querySelectorAll('a')[1];
         firstPage.className = 'active';
     }
@@ -277,9 +275,25 @@ class App extends React.Component {
         })
     }
     setSearchKeyword(keyword) {
-        console.log(keyword)
+        //console.log(keyword)
         this.setState({
             searchKeyword: keyword
+        })
+    }
+    showLoader() {
+        if (this.state.over) {
+            this.setState({
+                over: false
+            })
+        } else {
+            this.setState({
+                over: true
+            })
+        }
+    }
+    setCurrent(current) {
+        this.setState({
+            current: current
         })
     }
     getListTotal(data) {
@@ -296,9 +310,6 @@ class App extends React.Component {
             },
             success: (res) => {
                 if (res.response.slice(2, 7) === 'error') {
-                    //console.log('jwt error', res.response);
-                    // alert('登录过期，请重新登录');
-                    // window.location = '/#/login';
                     return
                 }
                 that.setState({
@@ -308,8 +319,22 @@ class App extends React.Component {
         })
     }
     render() {
+        let loader = null;
+        let cover = null;
+        if (this.state.over) {
+            loader = <Loader className="loader" type="cube-transition" color="green" active />
+            cover = <div className="cover"><p>正在推送中，请勿关闭页面···</p></div>
+        }
+
+        let loaderStyle = {};
+        //if () {}
+        let overStyle = {};
         let show = null;
         if (this.state.show) {
+            overStyle = {
+                overflow: 'hidden',
+                height: '99.5vh'
+            }
             show = <Template 
             showTemplate={this.showTemplate} 
             setStep={this.setStep}
@@ -319,7 +344,9 @@ class App extends React.Component {
             setInfo={this.setInfo} />
         }
         return (
-            <div>
+            <div style={overStyle}>
+                {loader}
+                {cover}
             	<HeaderInfo />
             	<Func 
                 send={this.send}
@@ -329,14 +356,18 @@ class App extends React.Component {
                 setSearchKeyword={this.setSearchKeyword}
                 listTotal={this.state.listTotal} />
 
-                <Table 
+                <Table
+                style={loaderStyle} 
                 index={this.state.index} 
                 searchKeyword={this.state.searchKeyword}
                 addPushMessage={this.addPushMessage}
                 deletePushMessage={this.deletePushMessage}
                 selected={this.state.selected}
                 setSearchKeyword={this.setSearchKeyword}
-                getPushList={this.getPushList} />
+                getPushList={this.getPushList}
+                showLoader={this.showLoader}
+                setCurrent={this.setCurrent}
+                current={this.state.current} />
 
                 {show}
             </div>

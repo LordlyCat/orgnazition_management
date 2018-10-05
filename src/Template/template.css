@@ -1,3 +1,4 @@
+
 .templateWrapper{
 	position: absolute;
 	width: 100vw;
@@ -75,12 +76,12 @@
 }
 
 .setStep{
-	margin-top: 40px;
+	margin-top: 20px;
 	margin-left: 100px;
 }
 
 .template{
-	margin-top: 30px;
+	margin-top: 15px;
 }
 
 .xbsT {
@@ -111,11 +112,11 @@
 }
 
 .xbsTemplate .check{
-	left: 340px;
+	left: 370px;
 }
 
 .xbsTemplate .quit {
-	left: 100px;
+	left: 130px;
 }
 
 
@@ -123,9 +124,26 @@
 	margin-top: 30px;
 }
 
+.Twrapper p{
+	width: 80%;
+	font-size: 15px;
+	margin: 0 10%;
+	padding: 0;
+	line-height: 19px;
+	text-align: center;
+}
+
+.templateWrapper input{
+	margin-top: 10px;
+	width: 300px;
+	outline: none;
+	padding-left: 10px;
+}
 
 
-
+.inputBox {
+	height: 40px;
+}
 
 
 

@@ -1,6 +1,9 @@
 .tableWrapper {
     overflow: hidden;
     text-align: center;
+    min-width: 1080px;
+    max-width: 1600px;
+    margin: 20px auto;
 }
 
 .select,

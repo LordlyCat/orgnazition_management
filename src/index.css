@@ -1,19 +1,46 @@
 @import '~antd/dist/antd.css';
 
 body {
-  margin: 0;
-  padding: 0;
-  font-family: sans-serif;
-  box-sizing: border-box;
-  background: rgba(255, 250, 225, 0.3);
-  color: black;
+    margin: 0;
+    padding: 0;
+    font-family: sans-serif;
+    box-sizing: border-box;
+    background: rgba(255, 250, 225, 0.3);
+    color: black;
 }
 
-#root{
-	min-width: 1080px;
-	max-width: 1600px;
-	margin: 0 auto;
-/*	background: #fffae1;
-*/	color: black;
-  border: solid 1px white;
+#root {
+    /*min-width: 1080px;
+    max-width: 1600px;*/
+    margin: 0 auto;
+    color: black;
+    border: solid 1px white;
+}
+
+.loader {
+    position: absolute;
+    top: 200px;
+    left: 50%;
+    transform: scale(0.7);
+    z-index: 99999999;
+}
+
+.cover{
+    overflow: hidden;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.77);
+    z-index: 9999;
+}
+
+.cover p{
+    display: block;
+    width: 100%;
+    margin-top: 10vh;
+    color: white;
+    text-align: center;
+    
 }

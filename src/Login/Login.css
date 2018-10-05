@@ -1,4 +1,4 @@
-.title{
+#login .title{
 	font-size: 30px;
 	text-align: center;
 	margin: 50px;
@@ -6,7 +6,7 @@
 
 #login input{
 	display: block;
-	background: white;
+	background: pink;
 	width: 300px;
 	height: 45px;
 	border: none;
@@ -18,4 +18,47 @@
 
 #login input:last-child{
 	cursor: pointer;
+}
+
+#login input:disabled{
+    background-color: #A9A9A9;
+    opacity: 0.5;
+    cursor: default;
+}
+
+
+#login .check {
+	width: 300px;
+	height: 40px;
+	margin: 0 auto;
+	line-height: 40px;
+}
+
+#login .check input {
+	display: inline-block;
+	background: pink;
+	width: 20px !important;
+	height: 20px !important;
+	float: left;
+	margin: 12px 10px 0 0 !important;
+	cursor: pointer;
+}
+
+#login .check span{
+	color: blue;
+	cursor: pointer;
+}
+
+#login .check span:hover{
+	text-decoration:underline
+}
+
+.back{
+	display: block;
+	width: 200px;
+	height: 50px;
+	background: pink;
+	margin: 30px auto;
+	cursor: pointer;
+	outline: none;
 }
