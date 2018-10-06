@@ -40,6 +40,12 @@ class Login extends Component {
         }, {
             name: "学生社团联合会",
             statement: ['综合部', '宣传部', '社团服务部', '社团活动部']
+        }, {
+            name: "勤工助学中心",
+            statement: ['行政部', '宣传部', '策划部', '对外联络部', '失物招领部', '学生超市', '绿色书屋', '学生打印社', '文化产品部']
+        }, {
+            name: "重邮就业中心",
+            statement: ['综合支撑组', '对外活动组', '媒体运营组']
         }];
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleChange = this.handleChange.bind(this);
@@ -71,7 +77,7 @@ class Login extends Component {
             },
             success: (res) => {
                 let headerData = res.getAllResponseHeaders();
-                //console.log(JSON.parse(res.response));
+                console.log(JSON.parse(res.response));
                 if (JSON.parse(res.response).name === this.state.oname) {
 
                     for (var i = 0; i < this.allOrz.length; i++) {
@@ -132,8 +138,8 @@ class Login extends Component {
         return (
             <div id="login">
                 <div className="title">组织报名系统后台管理（测试版）</div>
-                <input type="text" value={this.state.oname} onChange={this.handleChange} />
-                <input type="password" value={this.state.password} onChange={this.handleChange} />
+                <input type="text" placeholder="账号" value={this.state.oname} onChange={this.handleChange} />
+                <input type="password" placeholder="密码" value={this.state.password} onChange={this.handleChange} />
                 <div className="check">
                     <input type="checkbox" onChange={this.getChecked}/>我已阅读<span onClick={this.showGuide}>组织报名系统后台管理使用说明</span>
                 </div>

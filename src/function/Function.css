@@ -85,3 +85,17 @@ img {
 	width: 300px;
 }
 
+.downloadUrl {
+	position: absolute;
+	top: 3px;
+	left: 5px;
+	opacity: 0;
+}
+
+.downloadCover{
+	width: 100px;
+	height: 50px;
+	position: absolute;
+	top: 0;
+	left: 0;
+}

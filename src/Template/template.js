@@ -58,7 +58,7 @@ class SelectWay extends Component {
             <div className="selectWay">
                 <span className="quit" onClick={this.props.showTemplate}>X</span>
                 <p>选择推送方式</p>
-                <div className="xbs btn" onClick={this.props.chooseWay.bind(this, 'xbs')} >重邮小帮手消息推送</div>
+                <div className="xbs btn" onClick={this.props.chooseWay.bind(this, 'xbs')} >微信消息推送</div>
                 <div className="sms btn" onClick={this.props.chooseWay.bind(this, 'sms')} >短信推送</div>
             </div>
 
@@ -117,8 +117,8 @@ class XbsTemplate extends Component {
                 <div className="template">
                     <span>模板选择：</span>
                     <select name="xbsT" className="xbsT" onChange={this.selectT} >
-                        <option value ="1">模板一</option>
-                        <option value ="2">模板二</option>
+                        <option value ="1">模板一（用于面试通知）</option>
+                        <option value ="2">模板二（用于录取通知）</option>
                     </select>
                     <div>{this.state.templateArr[this.state.select - 1]}</div>
                 </div>
@@ -207,7 +207,7 @@ class SMSTemplate extends Component {
             templateArr: [<Tsms_1 setInfo={props.setInfo} setT={this.setT} />,
                 <Tsms_2 setInfo={props.setInfo} setT={this.setT} />
             ],
-            templateID: [202577, 196810]
+            templateID: [205662, 196810]
         }
     }
     selectT(e) {
@@ -215,11 +215,11 @@ class SMSTemplate extends Component {
             select: e.target.value
         })
         if (e.target.value == 1) {
-            this.props.selectTemplate(202577)
+            this.props.selectTemplate(205662)
         } else if (e.target.value == 2) {
             this.props.selectTemplate(196810)
         } else {
-            this.props.selectTemplate(202577);
+            this.props.selectTemplate(205662);
         }
 
     }
@@ -229,13 +229,13 @@ class SMSTemplate extends Component {
                 <div className="title">短信推送</div>
                 <div className="setStep">
                     <span>定义流程进度：</span>
-                    <input type="text" onChange={this.props.setStep}/>
+                    <input type="text" placeholder="如“一面面试”" onChange={this.props.setStep}/>
                 </div>
                 <div className="template">
                     <span>模板选择：</span>
                     <select name="xbsT" className="xbsT" onChange={this.selectT} >
-                        <option value ="1">模板一</option>
-                        <option value ="2">模板二</option>
+                        <option value ="1">模板一（用于面试通知）</option>
+                        <option value ="2">模板二（用于录取通知）</option>
                     </select>
                     <div>{this.state.templateArr[this.state.select - 1]}</div>
                 </div>
@@ -255,8 +255,10 @@ class Tsms_1 extends Component {
         this.getState = this.getState.bind(this);
         this.info = {
             setStep: '',
-            location: '',
+            location1: '',
+            location2: '',
             time: '',
+            contactpeople: '',
             contactPhone: ''
         }
 
@@ -267,7 +269,6 @@ class Tsms_1 extends Component {
         info[key] = e.target.value;
         //console.log(info)
         localStorage.setItem('info', JSON.stringify(info));
-
     }
     onBlur(e) {
         //console.log(e.target.value);
@@ -279,12 +280,23 @@ class Tsms_1 extends Component {
         return this.state
     }
     render() {
+        let style = {
+            opacity: '0'
+        }
         return (
             <div className="Twrapper">
                 <div className="inputBox"><span>面试时间：</span><input type="text" 
                 onChange={this.getInput.bind(this, 'time')}
                 onBlur={this.onBlur.bind(this)} /></div>
-                <div className="inputBox"><span>面试地点：</span><input type="text" onChange={this.getInput.bind(this, 'location')}/></div>
+                <div className="inputBox"><span>面试地点：</span><input type="text" 
+                onChange={this.getInput.bind(this, 'location1')}
+                onBlur={this.onBlur.bind(this)} /></div>
+                <div className="inputBox"><span style={style}>面试地点：</span><input type="text" 
+                onChange={this.getInput.bind(this, 'location2')}
+                onBlur={this.onBlur.bind(this)} /></div>
+                <div className="inputBox"><span>联系人： </span><input type="text" 
+                onChange={this.getInput.bind(this, 'contactpeople')} 
+                onBlur={this.onBlur.bind(this)} /></div>
                 <div className="inputBox"><span>联系方式：</span><input type="text" 
                 onChange={this.getInput.bind(this, 'contactPhone')} 
                 onBlur={this.onBlur.bind(this)} /></div>
@@ -317,6 +329,7 @@ class Tsms_2 extends Component {
     render() {
         return (
             <div className="Twrapper">
+                <div className="inputBox"><p>来自xxxx的提醒: 学生姓名:xxx ,意向部门:xxxx </p></div>
                 <div className="inputBox"><span>录取结果：</span><input type="text" onChange={this.getInput.bind(this, 'result')}/></div>
             </div>
         )

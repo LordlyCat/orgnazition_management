@@ -11,12 +11,15 @@ import Cascader from 'antd/lib/cascader';
 class Func extends Component {
     constructor(props) {
         super(props);
+
         this.orz = JSON.parse(localStorage.getItem('orz'));
         this.search = this.search.bind(this);
         this.getKeyword = this.getKeyword.bind(this);
         this.onChange = this.onChange.bind(this);
         this.getStepInfo = this.getStepInfo.bind(this);
         this.setStepInfo = this.setStepInfo.bind(this);
+        this.exportExcel = this.exportExcel.bind(this);
+
         //this.searchKeyword = '';
         let stepInfoArr = this.orz.statement.map((ele, index) => {
             return {
@@ -54,6 +57,9 @@ class Func extends Component {
         }
     }
     componentDidMount() {
+        this.setStepInfo();
+    }
+    componentWillReceiveProps() {
         this.setStepInfo();
     }
     getStepInfo(dname) {
@@ -165,6 +171,38 @@ class Func extends Component {
         // console.log(this.state.cascaderOptions)
         // console.log(value);
     }
+    exportExcel() {
+        let that = this;
+        //console.log(this.props.selected);
+        let data = {
+            authorization: localStorage.getItem('authorization'),
+            oname: this.orz.name,
+            dname: this.props.selected.dname,
+            result: this.props.selected.status,
+            info: this.props.selected.schedule
+        }
+        console.log(data);
+
+        ajax({
+            url: 'http://localhost:4001/requestDownload',
+            method: 'POST',
+            data: data,
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                authorization: localStorage.getItem('authorization')
+            },
+            success: () => {
+                //document.querySelector('.downloadUrl').click();
+                let time = (10 + (Math.random() / 2) * 10) * 1000
+                that.props.setTips('正在导出···')
+                that.props.showLoader();
+                setTimeout(() => {
+                    that.props.showLoader();
+                    document.querySelector('.downloadUrl').click();
+                }, time)
+            }
+        })
+    }
     render() {
         let statementList = this.orz.statement.map((ele, index) =>
             <option value ={ele} key={index}>{ele}</option>
@@ -174,6 +212,8 @@ class Func extends Component {
         )
         return (
             <div className="funcWrapper">
+            <a className="downloadUrl" href="http://localhost:4001/download">ddd</a>
+            <div className="downloadCover"></div>
                 <div className="func">
                     <Cascader className="cascader" 
                     allowClear={false}
@@ -186,7 +226,7 @@ class Func extends Component {
             		<input type="text" className="search" placeholder="搜索姓名或学号" value={this.state.keyword} onChange={this.getKeyword} />
             		<img src={search} className="searchImg" alt="" onClick={this.search} />
             		<div className="btnWrapper">
-            			
+            			<Button onClick={this.exportExcel} >导出</Button>
             			<Button onClick={this.props.showTemplate}>推送</Button>
             		</div>
 

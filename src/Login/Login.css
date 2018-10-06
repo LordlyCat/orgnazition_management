@@ -47,10 +47,11 @@
 #login .check span{
 	color: blue;
 	cursor: pointer;
+	text-decoration:underline;
 }
 
 #login .check span:hover{
-	text-decoration:underline
+	opacity: 0.56;
 }
 
 .back{
@@ -61,4 +62,9 @@
 	margin: 30px auto;
 	cursor: pointer;
 	outline: none;
+}
+
+.content{
+	text-align: center;
+	margin-top: 100px;
 }

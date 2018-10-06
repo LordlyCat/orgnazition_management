@@ -41,8 +41,10 @@ class App extends React.Component {
             info: '',
             stepArr: [],
             over: false,
-            current: 1
+            current: 1,
+            tips: '正在推送中，请勿关闭页面···'
         }
+
         this.pushList = pushListSet;
         this.orz = JSON.parse(localStorage.getItem('orz'));
         this.addPushMessage = this.addPushMessage.bind(this);
@@ -60,6 +62,7 @@ class App extends React.Component {
         this.getPushList = this.getPushList.bind(this);
         this.showLoader = this.showLoader.bind(this);
         this.setCurrent = this.setCurrent.bind(this);
+        this.setTips = this.setTips.bind(this);
     }
     componentDidMount() {
         this.getStep();
@@ -110,7 +113,7 @@ class App extends React.Component {
             templateID = 'H3VNgVqo3r9ewRi0hhGJDKl_-VBginnIgtFmNyRXeiM';
         }
         if (this.state.way === 1 && templateID.length === 0) {
-            templateID = '202577';
+            templateID = '205662';
         }
 
         let ifOver = false;
@@ -135,18 +138,21 @@ class App extends React.Component {
             "choose": this.state.way, //推送模式
             "info": [...infoArr]
         }
-        //console.log(data);
+        console.log(data);
+        this.setTips('正在推送中，请勿关闭页面···');
         this.showLoader();
+
+
         // setTimeout(() => {
         //     this.showLoader();
+        //     that.getStep();
         // }, 5000)
         // that.showTemplate();
         // that.setState({
         //     templateID: ''
         // })
         // that.pushList = new Set();
-        // that.getStep();
-        //return false;
+        // return false;
 
         ajax({
             async: true,
@@ -161,14 +167,15 @@ class App extends React.Component {
 
                 if (res.response.slice(2, 7) === 'error') {
                     console.log('jwt error', res.response);
-                    //alert('登录过期，请重新登录');
-                    //window.location = '/#/login';
+                    alert('登录过期，请重新登录');
+                    window.location = '/#/login';
                     this.showLoader();
                     return
                 }
                 //console.log('推送', JSON.parse(res.response));
                 let resData = JSON.parse(res.response);
                 this.showLoader();
+                that.getStep();
                 alert('一共推送了' + resData['总数'] + '条，成功' + resData['成功'] + '条，失败' + resData['失败'] + '条');
             }
         });
@@ -177,7 +184,6 @@ class App extends React.Component {
             templateID: ''
         })
         that.pushList = new Set();
-        that.getStep();
     }
     getStep() {
         let that = this;
@@ -223,6 +229,11 @@ class App extends React.Component {
             dname: e[0],
             info: e[1],
             result: e[2]
+        }
+        if (obj.dname === this.orz.name) {
+            obj = {
+                oname: this.orz.name
+            }
         }
         this.getListTotal(obj);
         this.setCurrent(1);
@@ -318,12 +329,17 @@ class App extends React.Component {
             }
         })
     }
+    setTips(tips) {
+        this.setState({
+            tips: tips
+        })
+    }
     render() {
         let loader = null;
         let cover = null;
         if (this.state.over) {
             loader = <Loader className="loader" type="cube-transition" color="green" active />
-            cover = <div className="cover"><p>正在推送中，请勿关闭页面···</p></div>
+            cover = <div className="cover"><p>{this.state.tips}</p></div>
         }
 
         let loaderStyle = {};
@@ -354,7 +370,10 @@ class App extends React.Component {
                 showTemplate={this.showTemplate}
                 selectModule={this.selectModule}
                 setSearchKeyword={this.setSearchKeyword}
-                listTotal={this.state.listTotal} />
+                listTotal={this.state.listTotal}
+                selected={this.state.selected}
+                showLoader={this.showLoader}
+                setTips={this.setTips} />
 
                 <Table
                 style={loaderStyle} 

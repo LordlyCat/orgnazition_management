@@ -8,6 +8,7 @@ import Pagination from 'antd/lib/pagination'
 class Table extends Component {
     constructor(props) {
         super(props);
+
         this.orz = JSON.parse(localStorage.getItem('orz'));
         //this.handleChange = this.handleChange.bind(this);
         this.getlist = this.getList.bind(this);
@@ -111,7 +112,7 @@ class Table extends Component {
     }
     getList(data) {
         let that = this;
-        //console.log(data);
+        console.log('getlist', data);
         //oname, dname, currindex, result, info, status
         // {
         //     oname: oname,//组织名
@@ -132,9 +133,9 @@ class Table extends Component {
             },
             success: (res) => {
                 if (res.response.slice(2, 7) === 'error') {
-                    //console.log('jwt error', res.response);
-                    // alert('登录过期，请重新登录');
-                    // window.location = '/#/login';
+                    console.log('jwt error', res.response);
+                    alert('登录过期，请重新登录');
+                    window.location = '/#/login';
                     return
                 }
                 that.setState({
@@ -270,8 +271,8 @@ class Table extends Component {
     render() {
         let data = this.state.data;
         let dataArr = [];
-        //console.log('ccc', this.props.current)
         if (typeof(data) === 'string') {
+            //console.log(data);
             dataArr = data.split('[')[1].split(']')[0].split('{').slice(1);
             //console.log(dataArr)
             for (let i = 0, length1 = dataArr.length; i < length1; i++) {
