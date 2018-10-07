@@ -192,7 +192,6 @@ class Func extends Component {
                 authorization: localStorage.getItem('authorization')
             },
             success: () => {
-                //document.querySelector('.downloadUrl').click();
                 let time = (10 + (Math.random() / 2) * 10) * 1000
                 that.props.setTips('正在导出···')
                 that.props.showLoader();
