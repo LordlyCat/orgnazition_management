@@ -129,7 +129,10 @@ class App extends React.Component {
             alert('字符长度不能超过12个单位');
             return false;
         }
-
+        if (this.state.setStep.length === 0) {
+            alert('流程进度不能为空');
+            return false;
+        }
         let data = {
             "id": Array.from(this.pushList),
             "beizhu": this.state.setStep,
@@ -138,7 +141,7 @@ class App extends React.Component {
             "choose": this.state.way, //推送模式
             "info": [...infoArr]
         }
-        console.log(data);
+        //console.log(data);
         this.setTips('正在推送中，请勿关闭页面···');
         this.showLoader();
 

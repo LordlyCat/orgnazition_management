@@ -112,7 +112,7 @@ class Table extends Component {
     }
     getList(data) {
         let that = this;
-        console.log('getlist', data);
+        //console.log('getlist', data);
         //oname, dname, currindex, result, info, status
         // {
         //     oname: oname,//组织名
