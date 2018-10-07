@@ -398,7 +398,7 @@ class App extends React.Component {
 }
 
 
-ReactDOM.render(<Router basename="">
+ReactDOM.render(<Router basename="./">
         <Switch>
             <Route path="/index" component={App} />
             <Route path="/login" component={Login} />
