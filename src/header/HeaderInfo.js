@@ -93,7 +93,7 @@ class HeaderInfo extends Component {
                 authorization: localStorage.getItem('authorization')
             },
             success: (res) => {
-                console.log('getList');
+                //console.log('getList');
                 if (res.response.slice(2, 7) === 'error') {
                     console.log('jwt error');
                     // alert('登录过期，请重新登录');

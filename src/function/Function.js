@@ -184,7 +184,7 @@ class Func extends Component {
         //console.log(data);
 
         ajax({
-            url: 'http://www.lordlycat.com:4001/requestDownload',
+            url: 'https://wx.idsbllp.cn/nodejs/node_excel/requestDownload',
             method: 'POST',
             data: data,
             headers: {
@@ -212,10 +212,10 @@ class Func extends Component {
         )
         return (
             <div className="funcWrapper">
-            <a className="downloadUrl" href="http://www.lordlycat.com:4001/download">ddd</a>
+            <a className="downloadUrl" href="https://wx.idsbllp.cn/nodejs/node_excel/download">ddd</a>
             <div className="downloadCover"></div>
                 <div className="func">
-                    <Cascader className="cascader" 
+                    <Cascader className="cascader"
                     allowClear={false}
                     expandTrigger='hover'
                     defaultValue={[this.orz.name, '', '']} 

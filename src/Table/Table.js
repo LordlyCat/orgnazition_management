@@ -135,7 +135,7 @@ class Table extends Component {
                 if (res.response.slice(2, 7) === 'error') {
                     console.log('jwt error', res.response);
                     alert('登录过期，请重新登录');
-                    window.location = '/#/login';
+                    window.location = 'https://wx.idsbllp.cn/nodejs/orgnazition/#/login';
                     return
                 }
                 that.setState({
@@ -384,7 +384,7 @@ class Row extends Component {
                 if (res.response.slice(2, 7) === 'error') {
                     console.log('jwt error', res.response);
                     alert('登录过期，请重新登录');
-                    window.location = '/#/login';
+                    window.location = 'https://wx.idsbllp.cn/nodejs/orgnazition/#/login';
                     return
                 }
                 //console.log('面试', res.response);
