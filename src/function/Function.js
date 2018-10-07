@@ -181,7 +181,7 @@ class Func extends Component {
             result: this.props.selected.status,
             info: this.props.selected.schedule
         }
-        console.log(data);
+        //console.log(data);
 
         ajax({
             url: 'http://www.lordlycat.com:4001/requestDownload',

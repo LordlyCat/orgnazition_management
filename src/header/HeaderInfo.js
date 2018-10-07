@@ -74,7 +74,7 @@ class HeaderInfo extends Component {
     quit() {
         localStorage.setItem('orz', '');
         localStorage.setItem('authorization', '');
-        window.location = '/#/login';
+        window.location = './#/login';
     }
     componentWillReceiveProps() {
         this.getFee();
