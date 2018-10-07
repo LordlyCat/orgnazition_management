@@ -83,7 +83,7 @@ class HeaderInfo extends Component {
         let that = this;
         ajax({ //  总人数
             async: true,
-            url: 'https://bmtest.redrock.team/469bba0a564235dfceede42db14f17b0/usercount',
+            url: 'https://bmtest.redrock.team/469bba0a564235dfceede42db14f17b0/getfee',
             method: 'POST',
             data: {
                 oname: this.orz.name
@@ -100,8 +100,9 @@ class HeaderInfo extends Component {
                     // window.location = '/#/login';
                     return
                 }
+                let fee = JSON.parse(res.response).fee;
                 that.setState({
-                    recharge: res.response
+                    recharge: fee
                 })
             }
         })

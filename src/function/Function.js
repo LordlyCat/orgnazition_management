@@ -184,7 +184,7 @@ class Func extends Component {
         console.log(data);
 
         ajax({
-            url: 'http://localhost:4001/requestDownload',
+            url: 'http://www.lordlycat.com:4001/requestDownload',
             method: 'POST',
             data: data,
             headers: {
@@ -212,7 +212,7 @@ class Func extends Component {
         )
         return (
             <div className="funcWrapper">
-            <a className="downloadUrl" href="http://localhost:4001/download">ddd</a>
+            <a className="downloadUrl" href="http://www.lordlycat.com:4001/download">ddd</a>
             <div className="downloadCover"></div>
                 <div className="func">
                     <Cascader className="cascader" 
