@@ -48,8 +48,24 @@ td {
 
 th {
 	position: relative;
-    width: 14%;
+    width: 10%;
     text-align: center;
+}
+
+th.index{
+    width: 5%;
+}
+
+th.stateName{
+    width: 12%;
+}
+
+th.gender{
+    width: 5%;
+}
+
+th.college{
+    width: 14%;
 }
 
 td {
@@ -60,6 +76,10 @@ tr:hover{
 	opacity: 0.5;
 	background: lightgray;
 	color: black;
+}
+
+.tableWrapper .gender, .tableWrapper .index{
+
 }
 
 .checkBox, #selectAll{

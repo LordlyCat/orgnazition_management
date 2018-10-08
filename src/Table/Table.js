@@ -26,7 +26,6 @@ class Table extends Component {
             //current: 1
         }
         this.pageSize = 20;
-
         this.getList({
             oname: this.orz.name,
             currindex: 1,
@@ -46,19 +45,32 @@ class Table extends Component {
         let searchObj = {};
         if (newProps.searchKeyword.length > 0) {
             if (isNaN(newProps.searchKeyword)) {
-                searchObj.oname = this.orz.name;
-                searchObj.stuname = newProps.searchKeyword;
-                searchObj.currindex = 1;
-                searchObj.size = this.pageSize;
+                if (newProps.searchKeyword === '男' || newProps.searchKeyword === '女') {
+                    searchObj.oname = this.orz.name;
+                    searchObj.gender = newProps.searchKeyword;
+                    searchObj.currindex = newProps.current;
+                    searchObj.size = this.pageSize;
+                } else if (newProps.searchKeyword.slice(newProps.searchKeyword.length - 2, newProps.searchKeyword.length) === '学院') {
+                    searchObj.oname = this.orz.name;
+                    searchObj.college = newProps.searchKeyword;
+                    searchObj.currindex = newProps.current;
+                    searchObj.size = this.pageSize;
+                } else {
+                    searchObj.oname = this.orz.name;
+                    searchObj.stuname = newProps.searchKeyword;
+                    searchObj.currindex = newProps.current;
+                    searchObj.size = this.pageSize;
+                }
+
             } else {
                 searchObj.oname = this.orz.name;
                 searchObj.stuid = newProps.searchKeyword;
-                searchObj.currindex = 1;
+                searchObj.currindex = newProps.current;
                 searchObj.size = this.pageSize;
             }
 
         }
-        //console.log('update', searchObj);
+        console.log('update', searchObj);
         let data = {
             oname: that.orz.name,
             currindex: newProps.current,
@@ -78,6 +90,12 @@ class Table extends Component {
             data = searchObj
         }
         if (searchObj.stuid) {
+            data = searchObj
+        }
+        if (searchObj.gender) {
+            data = searchObj
+        }
+        if (searchObj.college) {
             data = searchObj
         }
         //console.log('update', data);
@@ -112,7 +130,7 @@ class Table extends Component {
     }
     getList(data) {
         let that = this;
-        //console.log('getlist', data);
+        console.log('getlist', data);
         //oname, dname, currindex, result, info, status
         // {
         //     oname: oname,//组织名
@@ -203,6 +221,37 @@ class Table extends Component {
         }
     }
     ponChange(page, pageSize) {
+
+        let searchObj = {};
+        if (this.props.searchKeyword.length > 0) {
+            if (isNaN(this.props.searchKeyword)) {
+                if (this.props.searchKeyword === '男' || this.props.searchKeyword === '女') {
+                    searchObj.oname = this.orz.name;
+                    searchObj.gender = this.props.searchKeyword;
+                    searchObj.currindex = page;
+                    searchObj.size = this.pageSize;
+                } else if (this.props.searchKeyword.slice(this.props.searchKeyword.length - 2, this.props.searchKeyword.length) === '学院') {
+                    searchObj.oname = this.orz.name;
+                    searchObj.college = this.props.searchKeyword;
+                    searchObj.currindex = page;
+                    searchObj.size = this.pageSize;
+                } else {
+                    searchObj.oname = this.orz.name;
+                    searchObj.stuname = this.props.searchKeyword;
+                    searchObj.currindex = page;
+                    searchObj.size = this.pageSize;
+                }
+
+            } else {
+                searchObj.oname = this.orz.name;
+                searchObj.stuid = this.props.searchKeyword;
+                searchObj.currindex = page;
+                searchObj.size = this.pageSize;
+            }
+
+        }
+
+
         // this.setState({
         //     current: page
         // })
@@ -222,6 +271,15 @@ class Table extends Component {
         if (this.state.selected.schedule.length > 0) {
             data.info = this.state.selected.schedule
         }
+
+        if (searchObj.stuname || searchObj.stuid || searchObj.gender || searchObj.college) {
+            data = {
+                ...data,
+                searchObj
+            }
+        }
+
+        console.log(data);
         this.getList(data);
         this.props.setCurrent(page);
     }
@@ -286,7 +344,6 @@ class Table extends Component {
                 }
             }
         }
-
         let list = dataArr.map((obj) => {
             return (
                 <Row data={obj} key={obj.cid} addPushMessage={this.props.addPushMessage}
@@ -309,7 +366,9 @@ class Table extends Component {
                                 <th className="index">序号</th>
                                 <th className="stateName">部门</th>
                                 <th className="username">姓名</th>
+                                <th className="gender">性别</th>
                                 <th className="stuID">学号</th>
+                                <th className="college">学院</th>
                                 <th className="phoneNum">电话</th>
                                 <th className="remarks">流程进度</th>
                                 <th className="status">状态</th>
@@ -417,7 +476,9 @@ class Row extends Component {
                 <td>{this.props.data.index}</td>
                 <td>{this.props.data.dname}</td>
                 <td>{this.props.data.stuname}</td>
+                <td>{this.props.data.gender}</td>
                 <td>{this.props.data.stuid}</td>
+                <td>{this.props.data.college}</td>
                 <td>{this.props.data.phonenum}</td>
                 <td>{this.props.data.info}</td>
                 <td>

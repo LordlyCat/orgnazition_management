@@ -133,6 +133,10 @@ class App extends React.Component {
             alert('流程进度不能为空');
             return false;
         }
+        if (this.state.setStep.length > 12) {
+            alert('流程进度字符长度不能超过12');
+            return false;
+        }
         let data = {
             "id": Array.from(this.pushList),
             "beizhu": this.state.setStep,
@@ -293,6 +297,7 @@ class App extends React.Component {
         this.setState({
             searchKeyword: keyword
         })
+        this.setCurrent(1);
     }
     showLoader() {
         if (this.state.over) {

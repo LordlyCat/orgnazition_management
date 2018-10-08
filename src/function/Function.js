@@ -222,7 +222,7 @@ class Func extends Component {
                     onChange={this.props.selectModule} />
 
                     <p>（共{this.props.listTotal}人次）</p>
-            		<input type="text" className="search" placeholder="搜索姓名或学号" value={this.state.keyword} onChange={this.getKeyword} />
+            		<input type="text" className="search" placeholder="搜索姓名／学号／性别／学院" value={this.state.keyword} onChange={this.getKeyword} />
             		<img src={search} className="searchImg" alt="" onClick={this.search} />
             		<div className="btnWrapper">
             			<Button onClick={this.exportExcel} >导出</Button>
