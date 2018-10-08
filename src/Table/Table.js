@@ -420,6 +420,13 @@ class Row extends Component {
     changeStatus(e) {
         //改变面试状态
         let status = e.target.value;
+        if (status === '拉黑') {
+            console.log(123)
+            let confirm = window.confirm('此操作不可逆，是否确认拉黑！');
+            if (confirm === false) {
+                return false;
+            }
+        }
         let data = {
             "id": [this.props.data.cid],
             "beizhu": '',
