@@ -46,6 +46,9 @@ class Login extends Component {
         }, {
             name: "重邮就业中心",
             statement: ['综合支撑组', '对外活动组', '媒体运营组']
+        }, {
+            name: "重邮e站微+平台",
+            statement: ['办公室', '项目部', '采编部', '策划部', '记者团']
         }];
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleChange = this.handleChange.bind(this);
@@ -68,7 +71,7 @@ class Login extends Component {
             url: 'https://bmtest.redrock.team/469bba0a564235dfceede42db14f17b0/login',
             method: 'POST',
             data: {
-                username: this.state.oname,
+                username: encodeURIComponent(this.state.oname.toString()),
                 passwd: this.state.password.toString()
             },
             header: 'application/x-www-form-urlencoded',
@@ -77,6 +80,7 @@ class Login extends Component {
             },
             success: (res) => {
                 let headerData = res.getAllResponseHeaders();
+                console.log(encodeURIComponent(this.state.oname.toString()))
                 console.log(JSON.parse(res.response));
                 if (JSON.parse(res.response).name === this.state.oname) {
 
